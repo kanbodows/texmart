@@ -1,7 +1,7 @@
 <nav class="border-b-2 border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-900">
     <div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
         <a class="flex items-center space-x-3 rtl:space-x-reverse" href="/">
-            <img class="h-9" src="{{ asset("img/logo-with-text.jpg") }}" alt="{{ app_name() }} Logo" />
+            <img class="h-9" src="{{ asset("img/logo2.png") }}" alt="{{ app_name() }} Logo" />
         </a>
         <div class="flex items-center justify-end space-x-1 md:order-2 md:space-x-0 rtl:space-x-reverse">
             <button
@@ -160,7 +160,7 @@
                             <li class="border-b-2 border-gray-200">
                                 <a
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    href="{{ route("backend.dashboard") }}"
+                                    href="{{ route("admin.dashboard") }}"
                                     role="menuitem"
                                 >
                                     <div class="inline-flex items-center">

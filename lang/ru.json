@@ -12,6 +12,10 @@
     "Name": "Имя",
     "Email": "Электронная почта",
     "Password": "Пароль",
+    "Log in": "Войти",
+    "Remember me": "Запомить меня",
+    "Forgot your password?": "Забыли пароль?",
+    "Create an account?": "Создать аккаунт?",
     "Password Confirmation": "Подтверждение пароля",
 
     "Value": "Значение",
@@ -40,6 +44,7 @@
     "Activity Log": "Журнал активности",
     "Log": "Журнал",
     "Logs": "Журналы",
+    "Users": "Пользователи",
     "Current": "Текущий",
     "Old": "Старый",
     "At": "В",

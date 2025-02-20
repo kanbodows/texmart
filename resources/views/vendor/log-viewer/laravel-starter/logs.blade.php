@@ -1,4 +1,4 @@
-@extends ('backend.layouts.app')
+@extends ('admin.layouts.app')
 
 <?php
 $module_icon = 'fa-solid fa-list-check';
@@ -8,27 +8,27 @@ $module_icon = 'fa-solid fa-list-check';
 @endsection
 
 @section('breadcrumbs')
-    <x-backend.breadcrumbs>
-        <x-backend.breadcrumb-item route="{{ route('log-viewer::dashboard') }}" icon='{{ $module_icon }}'>
+    <x-admin.breadcrumbs>
+        <x-admin.breadcrumb-item route="{{ route('log-viewer::dashboard') }}" icon='{{ $module_icon }}'>
             {{ __('Log Dashboard') }}
-        </x-backend.breadcrumb-item>
-        <x-backend.breadcrumb-item type="active">@lang('Daily Log')</x-backend.breadcrumb-item>
-    </x-backend.breadcrumbs>
+        </x-admin.breadcrumb-item>
+        <x-admin.breadcrumb-item type="active">@lang('Daily Log')</x-admin.breadcrumb-item>
+    </x-admin.breadcrumbs>
 @endsection
 
 @section('content')
     <div class="card mb-4">
         <div class="card-body">
-            <x-backend.section-header>
+            <x-admin.section-header>
                 @lang('Logs by Date')
 
                 <x-slot name="toolbar">
-                    <x-backend.buttons.return-back />
+                    <x-admin.buttons.return-back />
                     <a class="btn btn-primary ms-1" type="button" href="{{ route('log-viewer::logs.list') }}">
                         <i class="fas fa-list-ol"></i> @lang('Daily Log')
                     </a>
                 </x-slot>
-            </x-backend.section-header>
+            </x-admin.section-header>
 
             <div class="table-responsive">
                 <table class="table-sm table-hover table">

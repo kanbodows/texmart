@@ -38,11 +38,11 @@ Route::group(['namespace' => '\Modules\Category\Http\Controllers\Frontend', 'as'
 *
 * --------------------------------------------------------------------
 */
-Route::group(['namespace' => '\Modules\Category\Http\Controllers\Backend', 'as' => 'backend.', 'middleware' => ['web', 'auth', 'can:view_backend'], 'prefix' => 'admin'], function () {
+Route::group(['namespace' => '\Modules\Category\Http\Controllers\Admin', 'as' => 'admin.', 'middleware' => ['web', 'auth', 'can:view_admin'], 'prefix' => 'admin'], function () {
     /*
-    * These routes need view-backend permission
-    * (good if you want to allow more than one group in the backend,
-    * then limit the backend features by different roles or permissions)
+    * These routes need view-admin permission
+    * (good if you want to allow more than one group in the admin,
+    * then limit the admin features by different roles or permissions)
     *
     * Note: Administrator has all permissions so you do not have to specify the administrator role everywhere.
     */

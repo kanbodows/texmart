@@ -5,6 +5,8 @@ use App\Http\Controllers\LanguageController;
 use App\Livewire\Privacy;
 use App\Livewire\Terms;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\SellersConfController;
+use App\Http\Controllers\Admin\AnnouncesController;
 
 /*
 *
@@ -58,17 +60,17 @@ Route::group(['namespace' => 'App\Http\Controllers\Frontend', 'as' => 'frontend.
 
 /*
 *
-* Backend Routes
+* Admin Routes
 * These routes need view-backend permission
 * --------------------------------------------------------------------
 */
-Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin', 'as' => 'backend.', 'middleware' => ['auth', 'can:view_backend']], function () {
+Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'can:view_backend']], function () {
     /**
-     * Backend Dashboard
+     * Admin Dashboard
      * Namespaces indicate folder structure.
      */
-    Route::get('/', 'BackendController@index')->name('home');
-    Route::get('dashboard', 'BackendController@index')->name('dashboard');
+    Route::get('/', 'AdminController@index')->name('home');
+    Route::get('dashboard', 'AdminController@index')->name('dashboard');
 
     /*
      *
@@ -81,6 +83,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
         $controller_name = 'SettingController';
         Route::get("{$module_name}", "{$controller_name}@index")->name("{$module_name}.index");
         Route::post("{$module_name}", "{$controller_name}@store")->name("{$module_name}.store");
+
+        // Универсальные маршруты для всех типов фильтров
+        Route::get('/sellers_conf', [\App\Http\Controllers\Admin\SellersConfController::class, 'index']);
+        Route::post('/sellers_conf/{type}/store', [\App\Http\Controllers\Admin\SellersConfController::class, 'store']);
+        Route::put('/sellers_conf/{type}/update/{id}', [\App\Http\Controllers\Admin\SellersConfController::class, 'update']);
+        Route::delete('/sellers_conf/{type}/delete/{id}', [\App\Http\Controllers\Admin\SellersConfController::class, 'delete']);
     });
 
     /*
@@ -138,6 +146,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
     Route::patch("{$module_name}/{id}/block", ['as' => "{$module_name}.block", 'uses' => "{$controller_name}@block", 'middleware' => ['can:block_users']]);
     Route::patch("{$module_name}/{id}/unblock", ['as' => "{$module_name}.unblock", 'uses' => "{$controller_name}@unblock", 'middleware' => ['can:block_users']]);
     Route::resource("{$module_name}", "{$controller_name}");
+
+
+   /**
+    * Объявления
+    */
+    Route::resource('announces', AnnouncesController::class);
+
 });
 
 /**

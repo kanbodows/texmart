@@ -39,7 +39,7 @@
                         <div class="col-span-6 sm:col-span-3">
                             <?php
                             $field_name = "password";
-                            $field_lable = __("labels.backend.users.fields." . $field_name);
+                            $field_lable = __("labels.admin.users.fields." . $field_name);
                             $field_placeholder = $field_lable;
                             $required = "required";
                             ?>
@@ -51,7 +51,7 @@
                         <div class="col-span-6 sm:col-span-3">
                             <?php
                             $field_name = "password_confirmation";
-                            $field_lable = __("labels.backend.users.fields." . $field_name);
+                            $field_lable = __("labels.admin.users.fields." . $field_name);
                             $field_placeholder = $field_lable;
                             $required = "required";
                             ?>

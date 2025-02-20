@@ -189,7 +189,7 @@ class BackendViewSuperAdminTest extends TestCase
         $user_id = 5;
 
         $response = $this
-            ->postJson(route('backend.users.changePasswordUpdate', $user_id), [
+            ->postJson(route('admin.users.changePasswordUpdate', $user_id), [
                 '_method' => 'PATCH',
                 'password' => '123456',
                 'password_confirmation' => '123456',
@@ -197,7 +197,7 @@ class BackendViewSuperAdminTest extends TestCase
 
         $response->assertStatus(302);
 
-        $response->assertRedirect(route('backend.users.show', $user_id));
+        $response->assertRedirect(route('admin.users.show', $user_id));
     }
 
     /**

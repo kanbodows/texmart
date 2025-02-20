@@ -7,14 +7,14 @@
                 <table class="table-hover table-responsive-sm table" wire:loading.class="table-secondary">
                     <thead>
                         <tr>
-                            <th>{{ __("labels.backend.users.fields.name") }}</th>
-                            <th>{{ __("labels.backend.users.fields.email") }}</th>
-                            <th>{{ __("labels.backend.users.fields.status") }}</th>
-                            <th>{{ __("labels.backend.users.fields.roles") }}</th>
-                            <th>{{ __("labels.backend.users.fields.permissions") }}</th>
-                            <th>{{ __("labels.backend.users.fields.social") }}</th>
+                            <th>{{ __("labels.admin.users.fields.name") }}</th>
+                            <th>{{ __("labels.admin.users.fields.email") }}</th>
+                            <th>{{ __("labels.admin.users.fields.status") }}</th>
+                            <th>{{ __("labels.admin.users.fields.roles") }}</th>
+                            <th>{{ __("labels.admin.users.fields.permissions") }}</th>
+                            <th>{{ __("labels.admin.users.fields.social") }}</th>
 
-                            <th class="text-end">{{ __("labels.backend.action") }}</th>
+                            <th class="text-end">{{ __("labels.admin.action") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,7 +22,7 @@
                             <tr>
                                 <td>
                                     <strong>
-                                        <a href="{{ route("backend.users.show", $user->id) }}">
+                                        <a href="{{ route("admin.users.show", $user->id) }}">
                                             {{ $user->name }}
                                         </a>
                                     </strong>
@@ -70,8 +70,8 @@
                                     <a
                                         class="btn btn-success btn-sm mt-1"
                                         data-toggle="tooltip"
-                                        href="{{ route("backend.users.show", $user) }}"
-                                        title="{{ __("labels.backend.show") }}"
+                                        href="{{ route("admin.users.show", $user) }}"
+                                        title="{{ __("labels.admin.show") }}"
                                     >
                                         <i class="fas fa-desktop fa-fw"></i>
                                     </a>
@@ -79,16 +79,16 @@
                                         <a
                                             class="btn btn-primary btn-sm mt-1"
                                             data-toggle="tooltip"
-                                            href="{{ route("backend.users.edit", $user) }}"
-                                            title="{{ __("labels.backend.edit") }}"
+                                            href="{{ route("admin.users.edit", $user) }}"
+                                            title="{{ __("labels.admin.edit") }}"
                                         >
                                             <i class="fas fa-wrench fa-fw"></i>
                                         </a>
                                         <a
                                             class="btn btn-info btn-sm mt-1"
                                             data-toggle="tooltip"
-                                            href="{{ route("backend.users.changePassword", $user) }}"
-                                            title="{{ __("labels.backend.changePassword") }}"
+                                            href="{{ route("admin.users.changePassword", $user) }}"
+                                            title="{{ __("labels.admin.changePassword") }}"
                                         >
                                             <i class="fas fa-key fa-fw"></i>
                                         </a>
@@ -99,8 +99,8 @@
                                                 data-token="{{ csrf_token() }}"
                                                 data-toggle="tooltip"
                                                 data-confirm="Are you sure?"
-                                                href="{{ route("backend.users.block", $user) }}"
-                                                title="{{ __("labels.backend.block") }}"
+                                                href="{{ route("admin.users.block", $user) }}"
+                                                title="{{ __("labels.admin.block") }}"
                                             >
                                                 <i class="fas fa-ban fa-fw"></i>
                                             </a>
@@ -113,8 +113,8 @@
                                                 data-token="{{ csrf_token() }}"
                                                 data-toggle="tooltip"
                                                 data-confirm="Are you sure?"
-                                                href="{{ route("backend.users.unblock", $user) }}"
-                                                title="{{ __("labels.backend.unblock") }}"
+                                                href="{{ route("admin.users.unblock", $user) }}"
+                                                title="{{ __("labels.admin.unblock") }}"
                                             >
                                                 <i class="fas fa-check fa-fw"></i>
                                             </a>
@@ -126,8 +126,8 @@
                                             data-token="{{ csrf_token() }}"
                                             data-toggle="tooltip"
                                             data-confirm="Are you sure?"
-                                            href="{{ route("backend.users.destroy", $user) }}"
-                                            title="{{ __("labels.backend.delete") }}"
+                                            href="{{ route("admin.users.destroy", $user) }}"
+                                            title="{{ __("labels.admin.delete") }}"
                                         >
                                             <i class="fas fa-trash-alt fa-fw"></i>
                                         </a>
@@ -135,7 +135,7 @@
                                             <a
                                                 class="btn btn-primary btn-sm mt-1"
                                                 data-toggle="tooltip"
-                                                href="{{ route("backend.users.emailConfirmationResend", $user->id) }}"
+                                                href="{{ route("admin.users.emailConfirmationResend", $user->id) }}"
                                                 title="Send Confirmation Email"
                                             >
                                                 <i class="fas fa-envelope fa-fw"></i>
@@ -152,7 +152,7 @@
     </div>
     <div class="row">
         <div class="col-7">
-            <div class="float-left">{!! $users->total() !!} {{ __("labels.backend.total") }}</div>
+            <div class="float-left">{!! $users->total() !!} {{ __("labels.admin.total") }}</div>
         </div>
         <div class="col-5">
             <div class="float-end">

@@ -30,7 +30,7 @@
         'category_name' => 'Категория',
     ],
 
-    'backend' => [
+    'admin' => [
         'users' => [
             'index' => [
                 'action' => 'Список',

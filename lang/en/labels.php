@@ -31,7 +31,7 @@ return [
     ],
     // __("labels.text.edit_profile")
 
-    'backend' => [
+    'admin' => [
         'users' => [
             'index' => [
                 'action' => 'List',
