@@ -6,7 +6,7 @@ $notifications_latest = optional($notifications)->take(5);
 
 <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
     <div class="sidebar-header border-bottom">
-        <div class="sidebar-brand d-sm-flex justify-content-center">
+        <div class="sidebar-brand d-sm-flex justify-content-center" style="margin: auto;">
             <a href="/">
                 <img
                     class="sidebar-brand-full"
@@ -110,16 +110,17 @@ $notifications_latest = optional($notifications)->take(5);
         @endphp
 
         <x-admin.sidebar-nav-item :permission="$permission" :url="$url" :icon="$icon" :text="$text" />
+ -->
 
         @php
-            $module_name = "users";
-            $text = __("Users");
-            $icon = "fa-solid fa-user-group";
-            $permission = "view_" . $module_name;
-            $url = route("admin." . $module_name . ".index");
+        $module_name = "users";
+        $text = __("Users");
+        $icon = "fa-solid fa-user-group";
+        $permission = "view_" . $module_name;
+        $url = route("admin." . $module_name . ".index");
         @endphp
 
-        <x-admin.sidebar-nav-item :permission="$permission" :url="$url" :icon="$icon" :text="$text" /> -->
+        <x-admin.sidebar-nav-item :permission="$permission" :url="$url" :icon="$icon" :text="$text" />
 
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.announces.index') }}">
@@ -151,7 +152,7 @@ $notifications_latest = optional($notifications)->take(5);
             </ul>
         </li>
 
-        <!-- @can("view_logs")
+        @can("view_logs")
             <li class="nav-group" aria-expanded="true">
                 <a class="nav-link nav-group-toggle" href="#">
                     <i class="nav-icon fa-solid fa-list-ul"></i>
@@ -173,7 +174,7 @@ $notifications_latest = optional($notifications)->take(5);
                     </li>
                 </ul>
             </li>
-        @endcan -->
+        @endcan
     </ul>
     <div class="sidebar-footer border-top d-none d-md-flex">
         <button class="sidebar-toggler" data-coreui-toggle="unfoldable" type="button"></button>

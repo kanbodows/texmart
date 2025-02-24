@@ -13,21 +13,21 @@ use Illuminate\Support\Str;
 use Laracasts\Flash\Flash;
 use App\Http\Controllers\Controller;
 use App\Models\Announce;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\DataTables;
 
-class AnnouncesController extends Controller
+class AnnouncesController extends AdminController
 {
     use Authorizable;
-
-    public $module_title;
-    public $module_name;
-    public $module_icon;
 
     public function __construct()
     {
         $this->module_title = 'Объявления';
         $this->module_name = 'announces';
+        $this->module_path = 'admin';
         $this->module_icon = 'fas fa-bullhorn';
+        parent::__construct();
     }
 
     public function index()
@@ -37,6 +37,7 @@ class AnnouncesController extends Controller
         $module_icon = $this->module_icon;
 
         $announces = Announce::with('user', 'category')->paginate(20);
+		View::share('module_action', 'Список');
 
         return view('admin.announces.index', compact('module_title', 'module_name', 'module_icon', 'announces'));
     }
@@ -48,11 +49,10 @@ class AnnouncesController extends Controller
      */
     public function create()
     {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_icon = $this->module_icon;
+		View::share('module_action', 'Создать');
+        $categories = \App\Models\Category::all();
 
-        return view('admin.announces.create', compact('module_title', 'module_name', 'module_icon'));
+        return view('admin.announces.create_edit', compact('categories'));
     }
 
     /**
@@ -129,13 +129,11 @@ class AnnouncesController extends Controller
      */
     public function edit($id)
     {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_icon = $this->module_icon;
-
         $announce = Announce::findOrFail($id);
+		View::share('module_action', 'Изменение');
+        $categories = \App\Models\Category::all();
 
-        return view('admin.announces.edit', compact('module_title', 'module_name', 'module_icon', 'announce'));
+        return view('admin.announces.create_edit', compact('categories', 'announce'));
     }
 
     /**
@@ -189,8 +187,56 @@ class AnnouncesController extends Controller
         $announce = Announce::findOrFail($id);
         $announce->delete();
 
+        flash('Объявление успешно удалено!')->success()->important();
+
+        logUserAccess("announces destroy | Id: {$id}");
+
         return redirect()
             ->route('admin.announces.index')
             ->with('success', 'Объявление успешно удалено');
+    }
+
+    public function index_data()
+    {
+        $announces = Announce::select([
+            'id',
+            'name',
+            'phone',
+            'email',
+            'price',
+            'currency',
+            'category_id',
+            'locate',
+            'check',
+            'updated_at'
+        ])
+        ->with('category:id,title'); // Подгружаем связанную категорию
+
+        return Datatables::of($announces)
+            ->addColumn('action', function ($data) {
+                return view('admin.announces.actions', compact('data'));
+            })
+            ->editColumn('name', function ($data) {
+                return '<strong><a href="' . route('admin.announces.edit', $data->id) . '">' . $data->name . '</a></strong>';
+            })
+            ->editColumn('price', function ($data) {
+                if ($data->price) {
+                    return number_format($data->price, 0, '.', ' ') . ' ' . $data->currency;
+                }
+                return 'Договорная';
+            })
+            ->editColumn('category_id', function ($data) {
+                return $data->category ? $data->category->title : '-';
+            })
+            ->editColumn('check', function ($data) {
+                return $data->check
+                    ? '<span class="badge bg-success">Активно</span>'
+                    : '<span class="badge bg-secondary">Неактивно</span>';
+            })
+            ->editColumn('updated_at', function ($data) {
+                return $data->updated_at->format('d.m.Y H:i');
+            })
+            ->rawColumns(['name', 'check', 'action'])
+            ->make(true);
     }
 }

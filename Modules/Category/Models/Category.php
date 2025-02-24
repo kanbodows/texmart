@@ -11,7 +11,7 @@ class Category extends BaseModel
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'categories';
+    protected $table = 'post_categories';
 
     /**
      * Caegories has Many posts.
