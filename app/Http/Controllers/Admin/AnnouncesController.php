@@ -26,6 +26,7 @@ class AnnouncesController extends AdminController
         $this->module_title = 'Объявления';
         $this->module_name = 'announces';
         $this->module_path = 'admin';
+        $this->module_model = 'App\Models\Announce';
         $this->module_icon = 'fas fa-bullhorn';
         parent::__construct();
     }
@@ -62,11 +63,11 @@ class AnnouncesController extends AdminController
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $data = $request->validate([
             'name' => 'required|string|max:191',
             'content' => 'required|string',
             'phone' => 'required|string|max:191',
-            'code' => 'required|string|max:191|unique:announces',
+            'code' => 'string|max:191',
             'email' => 'nullable|email|max:191',
             'user_id' => 'required|integer|exists:users,id',
             'locate' => 'nullable|string|max:191',
@@ -74,50 +75,25 @@ class AnnouncesController extends AdminController
             'price' => 'nullable|integer',
             'currency' => 'nullable|string|max:191',
             'date' => 'nullable|date',
-            'check' => 'nullable|boolean'
+            'check' => 'nullable|boolean',
+            'images' => 'array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+        $images = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                if (count($images) >= 5) break;
+                $path = $image->store('announces', 'public');
+                $images[] = $path;
+            }
         }
 
-        Announce::create($validator->validated());
+        $data['images'] = $images;
+        Announce::create($data);
 
-        return redirect()
-            ->route('admin.announces.index')
+        return redirect()->route('admin.announces.index')
             ->with('success', 'Объявление успешно создано');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     * @return \Illuminate\View\View
-     */
-    public function show($id)
-    {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
-        $module_model = $this->module_model;
-        $module_name_singular = Str::singular($module_name);
-
-        $module_action = 'Show';
-
-        $$module_name_singular = $module_model::findOrFail($id);
-
-        $users = User::role($$module_name_singular->name)->get();
-
-        Log::info(label_case($module_title.' '.$module_action).' | User:'.auth()->user()->name.'(ID:'.auth()->user()->id.')');
-
-        return view(
-            "admin.{$module_name}.show",
-            compact('module_title', 'module_name', 'module_path', 'module_icon', 'module_action', 'module_name_singular', "{$module_name_singular}", 'users')
-        );
     }
 
     /**
@@ -147,31 +123,38 @@ class AnnouncesController extends AdminController
     {
         $announce = Announce::findOrFail($id);
 
-        $validator = Validator::make($request->all(), [
+        $data = $request->validate([
             'name' => 'required|string|max:191',
             'content' => 'required|string',
             'phone' => 'required|string|max:191',
-            'code' => 'required|string|max:191|unique:announces,code,' . $id,
+            'code' => 'string|max:191',
             'email' => 'nullable|email|max:191',
-            'user_id' => 'required|integer|exists:users,id',
+            'user_id' => 'integer|exists:users,id',
             'locate' => 'nullable|string|max:191',
             'category_id' => 'nullable|integer|exists:categories,id',
             'price' => 'nullable|integer',
             'currency' => 'nullable|string|max:191',
             'date' => 'nullable|date',
-            'check' => 'nullable|boolean'
+            'check' => 'nullable|boolean',
+            'images' => 'array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'existing_images' => 'array|max:5'
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+        $images = $request->input('existing_images', []);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                if (count($images) >= 5) break;
+                $path = $image->store('announces', 'public');
+                $images[] = $path;
+            }
         }
 
-        $announce->update($validator->validated());
+        $data['images'] = $images;
+        $announce->update($data);
 
-        return redirect()
-            ->route('admin.announces.index')
+        return redirect()->route('admin.announces.index')
             ->with('success', 'Объявление успешно обновлено');
     }
 

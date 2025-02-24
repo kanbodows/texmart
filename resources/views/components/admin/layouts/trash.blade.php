@@ -4,7 +4,7 @@
     "module_path",
     "module_title" => "",
     "module_icon" => "",
-    "module_action" => "Trash",
+    "module_action" => "Корзина",
 ])
 <div class="card">
     @if ($slot != "")
@@ -24,10 +24,10 @@
                         class="btn btn-secondary btn-sm"
                         data-toggle="tooltip"
                         href="{{ route("admin.$module_name.index") }}"
-                        title="{{ __(ucwords($module_name)) }} @lang("List")"
+                        title="Вернуться к списку {{ __(ucwords($module_name)) }}"
                     >
                         <i class="fas fa-list"></i>
-                        @lang("List")
+                        Список
                     </a>
                 </x-slot>
             </x-admin.section-header>
@@ -36,14 +36,14 @@
                 <div class="col-12">
                     @if (count($data) > 0)
                         <div class="table-responsive">
-                            <table class="table-bordered table-hover table" id="datatable">
+                            <table class="table table-hover table-bordered" id="datatable">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Name</th>
-                                        <th>Updated At</th>
-                                        <th>Created By</th>
-                                        <th class="text-end">Action</th>
+                                        <th>Название</th>
+                                        <th>Обновлено</th>
+                                        <th>Кем создано</th>
+                                        <th class="text-end">Действия</th>
                                     </tr>
                                 </thead>
 
@@ -59,7 +59,7 @@
                                                 </strong>
                                             </td>
                                             <td>
-                                                {{ $row->updated_at->isoFormat("llll") }}
+                                                {{ $row->updated_at->format('d.m.Y H:i') }}
                                             </td>
                                             <td>
                                                 {{ $row->created_by }}
@@ -71,10 +71,10 @@
                                                     data-token="{{ csrf_token() }}"
                                                     data-toggle="tooltip"
                                                     href="{{ route("admin.$module_name.restore", $row) }}"
-                                                    title="{{ __("labels.admin.restore") }}"
+                                                    title="Восстановить"
                                                 >
-                                                    <i class="fa-solid fa-rotate-left"></i>
-                                                    &nbsp;{{ __("labels.admin.restore") }}
+                                                    <i class="fas fa-undo"></i>
+                                                    Восстановить
                                                 </a>
                                             </td>
                                         </tr>
@@ -85,7 +85,7 @@
                     @else
                         <div class="text-center">
                             <p>
-                                @lang("No record found in trash!")
+                                В корзине нет записей!
                             </p>
                         </div>
                     @endif
@@ -100,8 +100,8 @@
                 <div class="col-12 col-sm-7">
                     <div class="float-start">
                         <small>
-                            @lang("Total")
-                            {{ $data->total() }} {{ ucwords($module_name) }}
+                            Всего
+                            {{ $data->total() }} {{ __(ucwords($module_name)) }}
                         </small>
                     </div>
                 </div>

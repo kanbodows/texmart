@@ -166,28 +166,36 @@
                             {{-- Изображение --}}
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="image" class="form-label">Изображение</label>
+                                    <label for="images">Фотографии (максимум 5)</label>
                                     <input type="file"
-                                           name="image"
-                                           id="image"
-                                           class="form-control @error('image') is-invalid @enderror"
-                                           accept="image/*">
-                                    @error('image')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                           class="form-control-file"
+                                           id="images"
+                                           name="images[]"
+                                           multiple
+                                           accept="image/*"
+                                           data-max-files="5">
+                                    <small class="text-muted">Можно загрузить до 5 фотографий</small>
                                 </div>
                             </div>
 
-                            @if(isset($announce) && $announce->image)
-                                <div class="col-md-12">
-                                    <div class="current-image">
-                                        <img src="{{ asset($announce->image) }}" alt="Current Image" class="img-thumbnail" style="max-width: 200px">
-                                        <div class="form-check mt-2">
-                                            <input type="checkbox" name="remove_image" id="remove_image" class="form-check-input">
-                                            <label for="remove_image" class="form-check-label">Удалить изображение</label>
+                            @if(isset($announce) && $announce->images)
+                            <div class="row mt-3" id="images-preview">
+                                @foreach($announce->images as $index => $image)
+                                <div class="col-md-3 mb-3 image-container">
+                                    <div class="card">
+                                        <img src="{{ asset('storage/' . $image) }}" class="card-img-top" alt="Фото объявления">
+                                        <div class="card-body p-2">
+                                            <button type="button"
+                                                    class="btn btn-danger btn-sm delete-image"
+                                                    data-index="{{ $index }}">
+                                                Удалить
+                                            </button>
+                                            <input type="hidden" name="existing_images[]" value="{{ $image }}">
                                         </div>
                                     </div>
                                 </div>
+                                @endforeach
+                            </div>
                             @endif
 
                             {{-- Статус --}}
@@ -247,5 +255,61 @@
                 ]
             });
         });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageInput = document.getElementById('images');
+        const previewContainer = document.getElementById('images-preview') ||
+            document.createElement('div');
+        const maxFiles = 5;
+
+        if (!document.getElementById('images-preview')) {
+            previewContainer.id = 'images-preview';
+            previewContainer.className = 'row mt-3';
+            imageInput.parentNode.after(previewContainer);
+        }
+
+        imageInput.addEventListener('change', function() {
+            const existingImages = document.querySelectorAll('.image-container').length;
+            const selectedFiles = Array.from(this.files);
+
+            if (existingImages + selectedFiles.length > maxFiles) {
+                alert(`Можно загрузить максимум ${maxFiles} фотографий. У вас уже загружено ${existingImages} фото.`);
+                this.value = ''; // очищаем выбранные файлы
+                return;
+            }
+
+            selectedFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'col-md-3 mb-3 image-container';
+                    div.innerHTML = `
+                        <div class="card">
+                            <img src="${e.target.result}" class="card-img-top" alt="Предпросмотр">
+                            <div class="card-body p-2">
+                                <button type="button" class="btn btn-danger btn-sm delete-image">
+                                    Удалить
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Удаление фотографий
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-image')) {
+                const container = e.target.closest('.image-container');
+                container.remove();
+                // Очищаем input file, чтобы можно было загрузить новые фото
+                imageInput.value = '';
+            }
+        });
+    });
     </script>
 @endpush

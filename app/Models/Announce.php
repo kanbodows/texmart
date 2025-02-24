@@ -5,11 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Announce extends Model
 {
-    protected $fillable = ['name', 'content', 'user_id', 'phone', 'code', 'email', 'locate', 'category_id', 'price', 'currency', 'date'];
-    protected $casts = ['images'];
+    use SoftDeletes;
+
+    protected $fillable = ['name', 'content', 'user_id', 'phone', 'code', 'email', 'locate', 'category_id', 'price', 'currency', 'date', 'images'];
+    protected $casts = [
+        'images' => 'array'
+    ];
 
     public function user()
     {
@@ -23,10 +28,6 @@ class Announce extends Model
 
     public function category() {
         return $this->belongsTo(Category::class);
-    }
-
-    public function images() {
-        return $this->belongsToMany(AnnouncePhoto::class);
     }
 
     public static function getProductionViews($id)
