@@ -18,20 +18,12 @@ class PostsController extends AdminBaseController
 
     public function __construct()
     {
-        // Page Title
-        $this->module_title = 'Posts';
-
-        // module name
+        $this->module_title = 'Новости';
         $this->module_name = 'posts';
-
-        // directory path of the module
         $this->module_path = 'post::admin';
-
-        // module icon
         $this->module_icon = 'fa-regular fa-file-lines';
-
-        // module model name, path
         $this->module_model = "Modules\Post\Models\Post";
+        parent::__construct();
     }
 
     /**
@@ -44,14 +36,7 @@ class PostsController extends AdminBaseController
      */
     public function store(Request $request)
     {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
-        $module_model = $this->module_model;
-        $module_name_singular = Str::singular($module_name);
-
-        $module_action = 'Store';
+        $module_name_singular = Str::singular($this->module_name);
 
         $validated_data = $request->validate([
             'name' => 'required|max:191',
@@ -60,7 +45,7 @@ class PostsController extends AdminBaseController
             'intro' => 'required',
             'content' => 'required',
             'image' => 'required|max:191',
-            'category_id' => 'required|integer',
+            // 'category_id' => 'required|integer',
             'type' => Rule::enum(PostType::class),
             'is_featured' => 'required|integer',
             'tags_list' => 'nullable|array',
@@ -76,14 +61,14 @@ class PostsController extends AdminBaseController
         $data = Arr::except($validated_data, 'tags_list');
         $data['created_by_name'] = auth()->user()->name;
 
-        $$module_name_singular = $module_model::create($data);
+        $$module_name_singular = $this->module_model::create($data);
         $$module_name_singular->tags()->attach($request->input('tags_list'));
 
-        flash("New '".Str::singular($module_title)."' Added")->success()->important();
+        flash("Новый '".Str::singular($this->module_title)."' добавлен")->success()->important();
 
-        logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
+        logUserAccess($this->module_title.' Store | Id: '.$$module_name_singular->id);
 
-        return redirect("admin/{$module_name}");
+        return redirect("admin/{$this->module_name}");
     }
 
     /**
@@ -99,14 +84,7 @@ class PostsController extends AdminBaseController
      */
     public function update(Request $request, $id)
     {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
-        $module_model = $this->module_model;
-        $module_name_singular = Str::singular($module_name);
-
-        $module_action = 'Update';
+        $module_name_singular = Str::singular($this->module_name);
 
         $validated_data = $request->validate([
             'name' => 'required|max:191',
@@ -115,7 +93,7 @@ class PostsController extends AdminBaseController
             'intro' => 'required',
             'content' => 'required',
             'image' => 'required|max:191',
-            'category_id' => 'required|integer',
+            // 'category_id' => 'required|integer',
             'type' => Rule::enum(PostType::class),
             'is_featured' => 'required|integer',
             'tags_list' => 'nullable|array',
@@ -130,21 +108,16 @@ class PostsController extends AdminBaseController
 
         $data = Arr::except($validated_data, 'tags_list');
 
-        $$module_name_singular = $module_model::findOrFail($id);
-
+        $$module_name_singular = $this->module_model::findOrFail($id);
         $$module_name_singular->update($data);
 
-        if ($request->input('tags_list') === null) {
-            $tags_list = [];
-        } else {
-            $tags_list = $request->input('tags_list');
-        }
+        $tags_list = $request->input('tags_list', []);
         $$module_name_singular->tags()->sync($tags_list);
 
-        flash(Str::singular($module_title)."' Updated Successfully")->success()->important();
+        flash(Str::singular($this->module_title)." успешно обновлен")->success()->important();
 
-        logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
+        logUserAccess($this->module_title.' Update | Id: '.$$module_name_singular->id);
 
-        return redirect()->route("admin.{$module_name}.show", $$module_name_singular->id);
+        return redirect()->route("admin.{$this->module_name}.show", $$module_name_singular->id);
     }
 }

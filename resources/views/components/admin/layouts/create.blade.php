@@ -28,7 +28,7 @@
 
                     <div class="row">
                         <div class="col-6">
-                            <x-admin.buttons.create>Create</x-admin.buttons.create>
+                            <x-admin.buttons.create>Создать</x-admin.buttons.create>
                         </div>
                         <div class="col-6">
                             <div class="float-end">

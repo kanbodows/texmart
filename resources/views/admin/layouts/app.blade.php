@@ -49,7 +49,7 @@
             @include("admin.includes.header")
 
             <div class="body flex-grow-1">
-                <div class="container-lg">
+                <div class="container-fluid">
                     @include("flash::message")
 
                     <!-- Errors block -->

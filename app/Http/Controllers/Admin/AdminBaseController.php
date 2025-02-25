@@ -24,49 +24,12 @@ class AdminBaseController extends AdminController
         $module_model = $this->module_model;
         ${$this->module_name} = $module_model::paginate(15);
 
-        $module_action = 'List';
-        logUserAccess($this->module_title.' '.$module_action);
+        $module_action = 'Список';
+        // logUserAccess($this->module_title.' '.$module_action);
 
-        return view("{$this->module_path}.{$this->module_name}.index_datatable",
+        return view("{$this->module_path}.{$this->module_name}.index",
             compact( "{$this->module_name}", 'module_action')
         );
-    }
-
-    /**
-     * Retrieves a list of items based on the search term.
-     *
-     * @param  Request  $request  The HTTP request object.
-     * @return JsonResponse The JSON response containing the list of items.
-     */
-    public function index_list(Request $request)
-    {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
-        $module_model = $this->module_model;
-        $module_name_singular = Str::singular($module_name);
-
-        $module_action = 'List';
-
-        $term = trim($request->q);
-
-        if (empty($term)) {
-            return response()->json([]);
-        }
-
-        $query_data = $module_model::where('name', 'LIKE', "%{$term}%")->orWhere('slug', 'LIKE', "%{$term}%")->active()->limit(7)->get();
-
-        $$module_name = [];
-
-        foreach ($query_data as $row) {
-            $$module_name[] = [
-                'id' => $row->id,
-                'text' => $row->name,
-            ];
-        }
-
-        return response()->json($$module_name);
     }
 
     /**
@@ -76,21 +39,10 @@ class AdminBaseController extends AdminController
      */
     public function index_data()
     {
-        $module_title = $this->module_title;
         $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
         $module_model = $this->module_model;
-        $module_name_singular = Str::singular($module_name);
 
-        $module_action = 'List';
-
-        $page_heading = label_case($module_title);
-        $title = $page_heading.' '.label_case($module_action);
-
-        $$module_name = $module_model::select('id', 'name', 'updated_at');
-
-        $data = $$module_name;
+        $$module_name = $module_model::query();
 
         return Datatables::of($$module_name)
             ->addColumn('action', function ($data) {
@@ -100,14 +52,10 @@ class AdminBaseController extends AdminController
             })
             ->editColumn('name', '<strong>{{$name}}</strong>')
             ->editColumn('updated_at', function ($data) {
-                $module_name = $this->module_name;
-
                 $diff = Carbon::now()->diffInHours($data->updated_at);
-
                 if ($diff < 25) {
                     return $data->updated_at->diffForHumans();
                 }
-
                 return $data->updated_at->isoFormat('llll');
             })
             ->rawColumns(['name', 'action'])
@@ -122,20 +70,12 @@ class AdminBaseController extends AdminController
      */
     public function create()
     {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
-        $module_model = $this->module_model;
-        $module_name_singular = Str::singular($module_name);
-
-        $module_action = 'Create';
-
-        logUserAccess($module_title.' '.$module_action);
+        $module_action = 'Создать';
+        // logUserAccess($module_title.' '.$module_action);
 
         return view(
-            "{$module_path}.{$module_name}.create",
-            compact('module_title', 'module_name', 'module_path', 'module_icon', 'module_name_singular', 'module_action')
+            "{$this->module_path}.{$this->module_name}.create_edit",
+            compact('module_action')
         );
     }
 
@@ -151,16 +91,14 @@ class AdminBaseController extends AdminController
     {
         $module_title = $this->module_title;
         $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
 
-        $module_action = 'Store';
+        $module_action = 'Сохранение';
 
         $$module_name_singular = $module_model::create($request->all());
 
-        flash("New '".Str::singular($module_title)."' Added")->success()->important();
+        flash("Новый '".Str::singular($module_title)."' добавлен")->success()->important();
 
         logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
 
@@ -175,22 +113,16 @@ class AdminBaseController extends AdminController
      */
     public function show($id)
     {
-        $module_title = $this->module_title;
         $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
-
-        $module_action = 'Show';
+        $module_action = 'Просмотр';
 
         $$module_name_singular = $module_model::findOrFail($id);
-
-        logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
-
+        // logUserAccess($this->module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
         return view(
-            "{$module_path}.{$module_name}.show",
-            compact('module_title', 'module_name', 'module_path', 'module_icon', 'module_name_singular', 'module_action', "{$module_name_singular}")
+            "{$this->module_path}.{$this->module_name}.show",
+            compact('module_action', "{$module_name_singular}")
         );
     }
 
@@ -210,14 +142,14 @@ class AdminBaseController extends AdminController
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
 
-        $module_action = 'Edit';
+        $module_action = 'Редактировать';
 
         $$module_name_singular = $module_model::findOrFail($id);
 
         logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
 
         return view(
-            "{$module_path}.{$module_name}.edit",
+            "{$module_path}.{$module_name}.create_edit",
             compact('module_title', 'module_name', 'module_path', 'module_icon', 'module_action', 'module_name_singular', "{$module_name_singular}")
         );
     }
@@ -242,13 +174,13 @@ class AdminBaseController extends AdminController
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
 
-        $module_action = 'Update';
+        $module_action = 'Обновить';
 
         $$module_name_singular = $module_model::findOrFail($id);
 
         $$module_name_singular->update($request->all());
 
-        flash(Str::singular($module_title)."' Updated Successfully")->success()->important();
+        flash(Str::singular($module_title)."' успешно обновлен")->success()->important();
 
         logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
 
@@ -274,13 +206,13 @@ class AdminBaseController extends AdminController
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
 
-        $module_action = 'destroy';
+        $module_action = 'Удалить';
 
         $$module_name_singular = $module_model::findOrFail($id);
 
         $$module_name_singular->delete();
 
-        flash(label_case($module_name_singular).' Deleted Successfully!')->success()->important();
+        flash(label_case($module_name_singular).' успешно удален!')->success()->important();
 
         logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
 
@@ -300,9 +232,8 @@ class AdminBaseController extends AdminController
         $module_path = $this->module_path;
         $module_icon = $this->module_icon;
         $module_model = $this->module_model;
-        $module_name_singular = Str::singular($module_name);
 
-        $module_action = 'Trash List';
+        $module_action = 'Список удаленных';
 
         $$module_name = $module_model::onlyTrashed()->orderBy('deleted_at', 'desc')->paginate();
 
@@ -310,7 +241,7 @@ class AdminBaseController extends AdminController
 
         return view(
             "{$module_path}.{$module_name}.trash",
-            compact('module_title', 'module_name', 'module_path', "{$module_name}", 'module_icon', 'module_name_singular', 'module_action')
+            compact('module_title', 'module_name', 'module_path', "{$module_name}", 'module_icon', 'module_action')
         );
     }
 
@@ -334,12 +265,12 @@ class AdminBaseController extends AdminController
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
 
-        $module_action = 'Restore';
+        $module_action = 'Восстановить';
 
         $$module_name_singular = $module_model::withTrashed()->find($id);
         $$module_name_singular->restore();
 
-        flash(label_case($module_name_singular).' Data Restoreded Successfully!')->success()->important();
+        flash(label_case($module_name_singular).' Данные успешно восстановлены!')->success()->important();
 
         logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
 

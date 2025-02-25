@@ -15,7 +15,7 @@
 
 @section("content")
     <x-admin.layouts.show
-        :data="$$module_name_singular"
+        :data="$post"
         :module_name="$module_name"
         :module_path="$module_path"
         :module_title="$module_title"
@@ -23,7 +23,7 @@
         :module_action="$module_action"
     >
         <x-admin.section-header
-            :data="$$module_name_singular"
+            :data="$post"
             :module_name="$module_name"
             :module_title="$module_title"
             :module_icon="$module_icon"
@@ -32,27 +32,16 @@
 
         <div class="row mt-4">
             <div class="col-12 col-sm-8">
-                <x-admin.section-show-table :data="$$module_name_singular" :module_name="$module_name" />
+                <x-admin.section-show-table :data="$post" :module_name="$module_name" />
             </div>
             <div class="col-12 col-sm-4">
-                <h5>Category</h5>
-                <ul>
-                    <li>
-                        <a
-                            href="{{ route("admin.categories.show", [$$module_name_singular->category_id, $$module_name_singular->category->slug]) }}"
-                        >
-                            {{ $$module_name_singular->category->name }}
-                        </a>
-                    </li>
-                </ul>
-
                 <h5>
                     Tags
-                    <small>({{ count($$module_name_singular->tags) }})</small>
+                    <small>({{ count($post->tags) }})</small>
                 </h5>
 
                 <ul>
-                    @foreach ($$module_name_singular->tags as $tag)
+                    @foreach ($post->tags as $tag)
                         <li>
                             <a href="{{ route("admin.tags.show", [$tag->id, $tag->slug]) }}">
                                 {{ $tag->name }}

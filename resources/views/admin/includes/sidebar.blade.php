@@ -127,6 +127,24 @@ $notifications_latest = optional($notifications)->take(5);
                 <i class="nav-icon fa-solid fa-bullhorn"></i>  &nbsp; Объявления
             </a>
         </li>
+
+        <li class="nav-group" aria-expanded="true">
+            <a class="nav-link nav-group-toggle" href="#">
+                <i class="nav-icon fa-solid fa-file-lines"></i>
+                &nbsp;
+                Контент
+            </a>
+            <ul class="nav-group-items compact" style="height: auto">
+
+             <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.posts.index') }}">
+                        <span class="nav-icon"><span class="nav-icon-bullet"></span></span>
+                        Новости
+                    </a>
+                </li>
+            </ul>
+        </li>
+
         <li class="nav-group" aria-expanded="true">
             <a class="nav-link nav-group-toggle" href="#">
                 <i class="nav-icon fa-solid fa-cogs"></i>
