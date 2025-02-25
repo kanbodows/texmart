@@ -33,19 +33,19 @@
                         @lang("Name")
                         :
                     </strong>
-                    {{ $$module_name_singular->name }}
+                    {{ $user->name }}
                 </div>
                 <div class="col">
                     <strong>
                         @lang("Email")
                         :
                     </strong>
-                    {{ $$module_name_singular->email }}
+                    {{ $user->email }}
                 </div>
             </div>
             <div class="row mb-4 mt-4">
                 <div class="col">
-                    {{ html()->form("PATCH", route("admin.users.changePasswordUpdate", $$module_name_singular->id))->class("form-horizontal")->open() }}
+                    {{ html()->form("PATCH", route("admin.users.changePasswordUpdate", $user->id))->class("form-horizontal")->open() }}
 
                     <div class="form-group row mb-3">
                         {{ html()->label(__("labels.admin.users.fields.password"))->class("col-md-2 form-label")->for("password") }}
@@ -84,9 +84,9 @@
         <div class="card-footer">
             <x-admin.section-footer>
                 @lang("Updated")
-                : {{ $$module_name_singular->updated_at->diffForHumans() }},
+                : {{ $user->updated_at->diffForHumans() }},
                 @lang("Created at")
-                : {{ $$module_name_singular->created_at->isoFormat("LLLL") }}
+                : {{ $user->created_at->isoFormat("LLLL") }}
             </x-admin.section-footer>
         </div>
     </div>

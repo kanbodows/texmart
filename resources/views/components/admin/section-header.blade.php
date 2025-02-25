@@ -7,6 +7,7 @@
     "module_title" => "",
     "module_icon" => "",
     "module_action" => "",
+    "filters_block" => "",
 ])
 
 <div class="d-flex justify-content-between">
@@ -45,6 +46,14 @@
                         route='{{ route("admin.$module_name.create") }}'
                     />
                 @endif
+                @if ($filters_block)
+                    <button class="btn btn-sm btn-secondary" type="button" data-coreui-toggle="collapse" data-coreui-target="#filters-collapse" aria-expanded="false" aria-controls="filters-collapse">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <button class="btn btn-sm btn-secondary" id="reset-filters" title="Сбросить фильтры">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                @endif
 
                 @if (auth()->user()->can("restore_" . $module_name) && Route::has("admin." . $module_name . ".create"))
                     <div class="btn-group">
@@ -60,7 +69,7 @@
                             <li>
                                 <a class="dropdown-item" href="{{ route("admin.$module_name.trashed") }}">
                                     <i class="fas fa-eye-slash"></i>
-                                    @lang("View trash")
+                                    Корзина
                                 </a>
                             </li>
                         </ul>

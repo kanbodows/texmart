@@ -30,7 +30,7 @@ class RolesController extends Controller
     public function __construct()
     {
         // Page Title
-        $this->module_title = 'Roles';
+        $this->module_title = 'Роли';
 
         // module name
         $this->module_name = 'roles';
@@ -124,7 +124,7 @@ class RolesController extends Controller
         $permissions = isset($validated_data['permissions']) ? $validated_data['permissions'] : [];
         $$module_name_singular->syncPermissions($permissions);
 
-        flash("{$$module_name_singular->name} {$module_name_singular} created successfully!")->success()->important();
+        flash("{$$module_name_singular->name} {$module_name_singular} успешно создана!")->success()->important();
 
         Log::info(label_case($module_title.' '.$module_action).' | User:'.auth()->user()->name.'(ID:'.auth()->user()->id.')');
 

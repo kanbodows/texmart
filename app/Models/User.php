@@ -50,7 +50,6 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
             'date_of_birth' => 'datetime',
             'last_login' => 'datetime',
             'deleted_at' => 'datetime',
-            'social_profiles' => 'array',
         ];
     }
 

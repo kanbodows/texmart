@@ -16,6 +16,7 @@ use App\Models\Announce;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Storage;
 
 class AnnouncesController extends AdminController
 {
@@ -33,14 +34,10 @@ class AnnouncesController extends AdminController
 
     public function index()
     {
-        $module_title = $this->module_title;
-        $module_name = $this->module_name;
-        $module_icon = $this->module_icon;
-
         $announces = Announce::with('user', 'category')->paginate(20);
 		View::share('module_action', 'Список');
-
-        return view('admin.announces.index', compact('module_title', 'module_name', 'module_icon', 'announces'));
+		View::share('categories', \App\Models\Category::all());
+        return view('admin.announces.index', compact('announces'));
     }
 
     /**
@@ -50,10 +47,10 @@ class AnnouncesController extends AdminController
      */
     public function create()
     {
+		View::share('categories', \App\Models\Category::all());
 		View::share('module_action', 'Создать');
-        $categories = \App\Models\Category::all();
 
-        return view('admin.announces.create_edit', compact('categories'));
+        return view('admin.announces.create_edit');
     }
 
     /**
@@ -83,14 +80,15 @@ class AnnouncesController extends AdminController
         $images = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                if (count($images) >= 5) break;
                 $path = $image->store('announces', 'public');
                 $images[] = $path;
             }
         }
 
-        $data['images'] = $images;
-        Announce::create($data);
+        $announce = Announce::create(array_merge(
+            $request->validated(),
+            ['images' => $images]
+        ));
 
         return redirect()->route('admin.announces.index')
             ->with('success', 'Объявление успешно создано');
@@ -119,10 +117,8 @@ class AnnouncesController extends AdminController
      * @return \Illuminate\Http\Response
      * @return \Illuminate\View\View
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Announce $announce)
     {
-        $announce = Announce::findOrFail($id);
-
         $data = $request->validate([
             'name' => 'required|string|max:191',
             'content' => 'required|string',
@@ -141,18 +137,31 @@ class AnnouncesController extends AdminController
             'existing_images' => 'array|max:5'
         ]);
 
-        $images = $request->input('existing_images', []);
+        $images = $announce->images ?? [];
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                if (count($images) >= 5) break;
+        // Добавление новых изображений
+        if ($request->hasFile('new_images')) {
+            foreach ($request->file('new_images') as $image) {
                 $path = $image->store('announces', 'public');
                 $images[] = $path;
             }
         }
 
-        $data['images'] = $images;
-        $announce->update($data);
+        // Удаление отмеченных изображений
+        if ($request->has('remove_images')) {
+            foreach ($request->remove_images as $index) {
+                if (isset($images[$index])) {
+                    Storage::disk('public')->delete($images[$index]);
+                    unset($images[$index]);
+                }
+            }
+            $images = array_values($images); // переиндексируем массив
+        }
+
+        $announce->update(array_merge(
+            $request->validated(),
+            ['images' => $images]
+        ));
 
         return redirect()->route('admin.announces.index')
             ->with('success', 'Объявление успешно обновлено');
@@ -179,7 +188,7 @@ class AnnouncesController extends AdminController
             ->with('success', 'Объявление успешно удалено');
     }
 
-    public function index_data()
+    public function index_data(Request $request)
     {
         $announces = Announce::select([
             'id',
@@ -196,6 +205,50 @@ class AnnouncesController extends AdminController
         ->with('category:id,title'); // Подгружаем связанную категорию
 
         return Datatables::of($announces)
+            ->filter(function ($query) use ($request) {
+                // Фильтр по ID
+                if ($request->has('id') && !empty($request->id)) {
+                    $query->where('id', 'like', "%{$request->id}%");
+                }
+                // Фильтр по названию
+                if ($request->has('name') && !empty($request->name)) {
+                    $query->where('name', 'like', "%{$request->name}%");
+                }
+                // Фильтр по категории
+                if ($request->has('category_id') && !empty($request->category_id)) {
+                    $query->where('category_id', $request->category_id);
+                }
+                // Фильтр по телефону
+                if ($request->has('phone') && !empty($request->phone)) {
+                    $query->where('phone', 'like', "%{$request->phone}%");
+                }
+                // Фильтр по email
+                if ($request->has('email') && !empty($request->email)) {
+                    $query->where('email', 'like', "%{$request->email}%");
+                }
+                // Фильтр по цене
+                if ($request->has('price_min') && !empty($request->price_min)) {
+                    $query->where('price', '>=', $request->price_min);
+                }
+                if ($request->has('price_max') && !empty($request->price_max)) {
+                    $query->where('price', '<=', $request->price_max);
+                }
+                // Фильтр по местоположению
+                if ($request->has('locate') && !empty($request->locate)) {
+                    $query->where('locate', 'like', "%{$request->locate}%");
+                }
+                // Фильтр по статусу
+                if ($request->has('check') && $request->check !== '' && $request->check !== null) {
+                    $query->where('check', $request->check);
+                }
+                // Фильтр по дате обновления
+                if ($request->has('date_from') && !empty($request->date_from)) {
+                    $query->whereDate('updated_at', '>=', $request->date_from);
+                }
+                if ($request->has('date_to') && !empty($request->date_to)) {
+                    $query->whereDate('updated_at', '<=', $request->date_to);
+                }
+            })
             ->addColumn('action', function ($data) {
                 return view('admin.announces.actions', compact('data'));
             })
