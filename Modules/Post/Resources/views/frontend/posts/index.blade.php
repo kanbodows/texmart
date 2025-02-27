@@ -59,15 +59,7 @@
                     <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
                         {{ $$module_name_singular->intro }}
                     </p>
-                    <p>
-                        <x-frontend.badge
-                            :url="route('frontend.categories.show', [
-                                encode_id($$module_name_singular->category_id),
-                                $$module_name_singular->category->slug,
-                            ])"
-                            :text="$$module_name_singular->category_name"
-                        />
-                    </p>
+
                     <div class="mt-4">
                         @foreach ($$module_name_singular->tags as $tag)
                             <x-frontend.badge

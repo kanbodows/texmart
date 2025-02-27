@@ -54,21 +54,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-row justify-between py-5">
-                    <div>
-                        <span class="font-weight-bold">
-                            @lang("Category")
-                            :
-                        </span>
-                        <x-frontend.badge
-                            :url="route('frontend.categories.show', [
-                                encode_id($$module_name_singular->category_id),
-                                $$module_name_singular->category->slug,
-                            ])"
-                            :text="$$module_name_singular->category_name"
-                        />
-                    </div>
-                </div>
+
 
                 @if (count($$module_name_singular->tags))
                     <div class="py-5">
@@ -165,7 +151,7 @@
 @endsection
 
 @push("after-style")
-    
+
 @endpush
 
 @push("after-scripts")
