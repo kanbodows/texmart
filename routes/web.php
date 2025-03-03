@@ -7,6 +7,7 @@ use App\Livewire\Terms;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SellersConfController;
 use App\Http\Controllers\Admin\AnnouncesController;
+use App\Http\Controllers\Admin\PaymentsController;
 
 /*
 *
@@ -156,8 +157,36 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 
     Route::get("$module_name/index_data", ['as' => "$module_name.index_data", 'uses' => "$controller_name@index_data"]);
     Route::get("$module_name/trashed", ['as' => "$module_name.trashed", 'uses' => "$controller_name@trashed"]);
     Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
+    Route::get("$module_name/responses/{id}", ['as' => "$module_name.responses", 'uses' => "$controller_name@getResponses"]);
     Route::resource('announces', AnnouncesController::class);
 
+    /**
+     * Платежи
+     */
+    $module_name = 'payments';
+    $controller_name = 'PaymentsController';
+    Route::get("$module_name/index_data", ['as' => "$module_name.index_data", 'uses' => "$controller_name@index_data"]);
+    Route::resource('payments', PaymentsController::class)->only(['index', 'show']);
+
+    /*
+     * Responses Routes
+     */
+    $module_name = 'responses';
+    $controller_name = 'ResponsesController';
+    Route::get("$module_name/index_data", ['as' => "$module_name.index_data", 'uses' => "$controller_name@index_data"]);
+    Route::get("$module_name/trashed", ['as' => "$module_name.trashed", 'uses' => "$controller_name@trashed"]);
+    Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
+    Route::resource('responses', App\Http\Controllers\Admin\ResponsesController::class);
+
+    /*
+     * Feedbacks Routes
+     */
+    $module_name = 'feedbacks';
+    $controller_name = 'FeedbacksController';
+    Route::get("$module_name/index_data", ['as' => "$module_name.index_data", 'uses' => "$controller_name@index_data"]);
+    Route::get("$module_name/trashed", ['as' => "$module_name.trashed", 'uses' => "$controller_name@trashed"]);
+    Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
+    Route::resource('feedbacks', App\Http\Controllers\Admin\FeedbacksController::class);
 });
 
 /**

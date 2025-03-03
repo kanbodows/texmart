@@ -7,6 +7,11 @@
     >
         <i class="fas fa-desktop"></i>
     </a> -->
+
+    <a href="#" class="btn btn-success btn-sm mt-1 responses-badge" data-announce-id="{{$data->id}}" title="Посмотреть отклики">
+        {{$data->responses_count ?: 0}}
+        <i class="fas fa-comments"></i>
+    </a>
     <a
         href="{{ route("admin.announces.edit", $data) }}"
         class="btn btn-primary btn-sm mt-1"

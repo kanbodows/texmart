@@ -1,20 +1,44 @@
 <div class="text-end">
+    @can('user_show')
+        <a
+            href="{{ route("admin.users.show", $data) }}"
+            class="btn btn-info btn-sm"
+            data-bs-toggle="tooltip"
+            title="Просмотр"
+        >
+            <i class="fas fa-eye"></i>
+        </a>
+    @endcan
+
     <a
-        href="{{ route("admin.users.show", $data) }}"
-        class="btn btn-success btn-sm mt-1"
-        data-toggle="tooltip"
-        title="{{ __("labels.admin.show") }}"
+        href="{{ route("admin.payments.index", ["user_id" => $data->id]) }}"
+        class="btn btn-primary btn-sm"
+        data-bs-toggle="tooltip"
+        title="Показать платежи"
     >
-        <i class="fas fa-desktop"></i>
+        <i class="fas fa-money-bill"></i>
     </a>
+
     <a
-        href="{{ route("admin.users.edit", $data) }}"
-        class="btn btn-primary btn-sm mt-1"
-        data-toggle="tooltip"
-        title="{{ __("labels.admin.edit") }}"
+        href="{{ route("admin.responses.index", ["user_id" => $data->id]) }}"
+        class="btn btn-success btn-sm"
+        data-bs-toggle="tooltip"
+        title="Показать отклики"
     >
-        <i class="fas fa-wrench"></i>
+        <i class="fas fa-comments"></i>
     </a>
+
+    @can('user_edit')
+        <a
+            href="{{ route("admin.users.edit", $data) }}"
+            class="btn btn-warning btn-sm"
+            data-bs-toggle="tooltip"
+            title="Редактировать"
+        >
+            <i class="fas fa-edit"></i>
+        </a>
+    @endcan
+
     <a
         href="{{ route("admin.users.changePassword", $data) }}"
         class="btn btn-info btn-sm mt-1"

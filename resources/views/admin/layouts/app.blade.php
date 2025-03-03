@@ -30,7 +30,9 @@
             }
         </style>
 
-        @stack("after-styles")
+        <!-- General CSS -->
+        <link href="{{ asset('css/admin/style.css') }}" rel="stylesheet">
+        @stack('after-styles')
 
         <x-google-analytics />
 

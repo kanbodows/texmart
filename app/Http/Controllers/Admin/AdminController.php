@@ -34,7 +34,8 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('admin.index');
+        View::share('module_action', 'Список');
+        return view('admin.'.$this->module_name.'.index');
     }
 
     /**

@@ -20,9 +20,9 @@
                 :module_title="$module_title"
                 :module_icon="$module_icon"
                 :module_action="$module_action"
+                :create_route="route('admin.users.create')"
                 :filters_block=1
             />
-
 
             {{-- Фильтры --}}
             <div class="collapse mb-4" id="filters-collapse">
@@ -75,93 +75,41 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer">
-            <div class="row">
-                <div class="col-7">
-                    <div class="float-left"></div>
-                </div>
-                <div class="col-5">
-                    <div class="float-end"></div>
-                </div>
-            </div>
-        </div>
     </div>
 @endsection
 
 @push("after-styles")
-    <!-- DataTables Core and Extensions -->
     <link rel="stylesheet" href="{{ asset("vendor/datatable/datatables.min.css") }}" />
 @endpush
 
 @push("after-scripts")
-    <!-- DataTables Core and Extensions -->
     <script type="module" src="{{ asset("vendor/datatable/datatables.min.js") }}"></script>
+    <script src="{{ asset('js/admin/common.js') }}"></script>
 
-    <script type="module">
+    <script>
         $(document).ready(function() {
-            let table = $('#datatable').DataTable({
-                processing: true,
-                serverSide: true,
-                autoWidth: true,
-                responsive: true,
-                searching: false,
-                pageLength: 50,
+            // Инициализация таблицы
+            const table = initDataTable({
                 ajax: {
-                    url: '{{ route("admin.$module_name.index_data") }}',
+                    url: '{{ route("admin.users.index_data") }}',
                     data: function(d) {
                         $('.filter').each(function() {
                             d[$(this).data('column')] = $(this).val();
                         });
                     }
                 },
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/2.2.2/i18n/ru.json'
-                },
                 columns: [
-                    {
-                        data: 'id',
-                        name: 'id',
-                    },
-                    {
-                        data: 'name',
-                        name: 'name',
-                    },
-                    {
-                        data: 'email',
-                        name: 'email',
-                    },
-                    {
-                        data: 'status',
-                        name: 'status',
-                    },
-                    {
-                        data: 'user_roles',
-                        name: 'user_roles',
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false,
-                    },
-                ],
+                    {data: 'id', name: 'id'},
+                    {data: 'name', name: 'name'},
+                    {data: 'email', name: 'email'},
+                    {data: 'status', name: 'status'},
+                    {data: 'user_roles', name: 'user_roles'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false}
+                ]
             });
 
-            // Обработка фильтров
-            let timer;
-            $('.filter').on('change keyup select2:select select2:unselect', function() {
-                clearTimeout(timer);
-                timer = setTimeout(function() {
-                    table.draw();
-                }, 500);
-            });
-
-            // Кнопка сброса фильтров
-            $('#reset-filters').on('click', function() {
-                $('.filter').val('');
-                $('.select2-category').val(null).trigger('change');
-                table.draw();
-            });
+            // Инициализация фильтров
+            initFilters(table);
         });
     </script>
 @endpush

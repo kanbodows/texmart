@@ -96,28 +96,29 @@ class UsersController extends AdminController
      */
     public function index_list(Request $request)
     {
-        $module_action = 'Index List';
+        $term = $request->get('q');
+        $page = $request->get('page', 1);
+        $per_page = 30;
 
-        $term = trim($request->q);
+        $users = User::where(function($query) use ($term) {
+            if ($term) {
+                $query->where('name', 'like', "%{$term}%")
+                    ->orWhere('email', 'like', "%{$term}%");
+            }
+        })
+        ->select('id', 'name', 'email')
+        ->orderBy('name')
+        ->paginate($per_page);
 
-        if (empty($term)) {
-            return response()->json([]);
-        }
-
-        $query_data = $this->module_model::where('name', 'LIKE', "%{$term}%")->orWhere('email', 'LIKE', "%{$term}%")->limit(10)->get();
-
-        $$this->module_name = [];
-
-        foreach ($query_data as $row) {
-            $$this->module_name[] = [
-                'id' => $row->id,
-                'text' => $row->name.' (Email: '.$row->email.')',
-            ];
-        }
-
-        logUserAccess($this->module_title.' '.$module_action);
-
-        return response()->json($$this->module_name);
+        return response()->json([
+            'items' => $users->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'text' => $user->name . ' (' . $user->email . ')'
+                ];
+            }),
+            'total_count' => $users->total()
+        ]);
     }
 
     /**

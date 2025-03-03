@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Response;
 
 class AnnouncesController extends AdminController
 {
@@ -190,19 +191,7 @@ class AnnouncesController extends AdminController
 
     public function index_data(Request $request)
     {
-        $announces = Announce::select([
-            'id',
-            'name',
-            'phone',
-            'email',
-            'price',
-            'currency',
-            'category_id',
-            'locate',
-            'check',
-            'updated_at'
-        ])
-        ->with('category:id,title'); // Подгружаем связанную категорию
+        $announces = Announce::query()->withCount('responses');
 
         return Datatables::of($announces)
             ->filter(function ($query) use ($request) {
@@ -217,14 +206,6 @@ class AnnouncesController extends AdminController
                 // Фильтр по категории
                 if ($request->has('category_id') && !empty($request->category_id)) {
                     $query->where('category_id', $request->category_id);
-                }
-                // Фильтр по телефону
-                if ($request->has('phone') && !empty($request->phone)) {
-                    $query->where('phone', 'like', "%{$request->phone}%");
-                }
-                // Фильтр по email
-                if ($request->has('email') && !empty($request->email)) {
-                    $query->where('email', 'like', "%{$request->email}%");
                 }
                 // Фильтр по цене
                 if ($request->has('price_min') && !empty($request->price_min)) {
@@ -272,7 +253,24 @@ class AnnouncesController extends AdminController
             ->editColumn('updated_at', function ($data) {
                 return $data->updated_at->format('d.m.Y H:i');
             })
-            ->rawColumns(['name', 'check', 'action'])
+            ->rawColumns(['responses_count', 'name', 'check', 'action'])
+            ->make(true);
+    }
+
+    // Добавим метод для получения откликов
+    public function getResponses($id)
+    {
+        $responses = Response::with(['user'])
+            ->where('announce_id', $id)
+            ->select('responses.*');
+
+        return Datatables::of($responses)
+            ->addColumn('user_name', function ($response) {
+                return $response->user->name;
+            })
+            ->addColumn('created_at', function ($response) {
+                return $response->created_at->format('d.m.Y H:i');
+            })
             ->make(true);
     }
 }

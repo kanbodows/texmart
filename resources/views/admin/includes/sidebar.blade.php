@@ -123,8 +123,26 @@ $notifications_latest = optional($notifications)->take(5);
         <x-admin.sidebar-nav-item :permission="$permission" :url="$url" :icon="$icon" :text="$text" />
 
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.payments.index') }}">
+                <i class="nav-icon fa-solid fa-money-bill"></i>  &nbsp; Платежи
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.announces.index') }}">
                 <i class="nav-icon fa-solid fa-bullhorn"></i>  &nbsp; Объявления
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.responses.index') }}">
+                <i class="nav-icon fa-solid fa-comments"></i>  &nbsp; Отклики
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.feedbacks.index') }}">
+                <i class="nav-icon fa-solid fa-star"></i>  &nbsp; Отзывы
             </a>
         </li>
 

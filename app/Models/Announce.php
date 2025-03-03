@@ -30,6 +30,11 @@ class Announce extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function responses()
+    {
+        return $this->hasMany(Response::class)->withTrashed();
+    }
+
     public static function getProductionViews($id)
     {
         if (Session::has('productionsViewed')) {
