@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AnnounceStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Session;
@@ -11,9 +12,21 @@ class Announce extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'content', 'user_id', 'phone', 'code', 'email', 'locate', 'category_id', 'price', 'currency', 'date', 'images'];
+    protected $fillable = [
+        'title',
+        'content',
+        'user_id',
+        'category_id',
+        'status',
+        'price',
+        'currency',
+        'images',
+        'location'
+    ];
+
     protected $casts = [
-        'images' => 'array'
+        'images' => 'array',
+        'status' => AnnounceStatus::class
     ];
 
     public function user()
@@ -26,7 +39,8 @@ class Announce extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function category() {
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
 

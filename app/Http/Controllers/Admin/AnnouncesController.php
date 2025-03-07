@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Response;
+use Illuminate\Http\JsonResponse;
 
 class AnnouncesController extends AdminController
 {
@@ -184,14 +185,15 @@ class AnnouncesController extends AdminController
 
         logUserAccess("announces destroy | Id: {$id}");
 
-        return redirect()
-            ->route('admin.announces.index')
-            ->with('success', 'Объявление успешно удалено');
+        return response()->json(['success' => true]);
+        // return redirect()
+        //     ->route('admin.announces.index')
+        //     ->with('success', 'Объявление успешно удалено');
     }
 
     public function index_data(Request $request)
     {
-        $announces = Announce::query()->withCount('responses');
+        $announces = Announce::query()->with(['category', 'user'])->withCount('responses');
 
         return Datatables::of($announces)
             ->filter(function ($query) use ($request) {
@@ -207,6 +209,10 @@ class AnnouncesController extends AdminController
                 if ($request->has('category_id') && !empty($request->category_id)) {
                     $query->where('category_id', $request->category_id);
                 }
+                // Фильтр по статусу
+                if ($request->has('status') && !empty($request->status)) {
+                    $query->where('status', $request->status);
+                }
                 // Фильтр по цене
                 if ($request->has('price_min') && !empty($request->price_min)) {
                     $query->where('price', '>=', $request->price_min);
@@ -218,10 +224,6 @@ class AnnouncesController extends AdminController
                 if ($request->has('locate') && !empty($request->locate)) {
                     $query->where('locate', 'like', "%{$request->locate}%");
                 }
-                // Фильтр по статусу
-                if ($request->has('check') && $request->check !== '' && $request->check !== null) {
-                    $query->where('check', $request->check);
-                }
                 // Фильтр по дате обновления
                 if ($request->has('date_from') && !empty($request->date_from)) {
                     $query->whereDate('updated_at', '>=', $request->date_from);
@@ -230,11 +232,8 @@ class AnnouncesController extends AdminController
                     $query->whereDate('updated_at', '<=', $request->date_to);
                 }
             })
-            ->addColumn('action', function ($data) {
-                return view('admin.announces.actions', compact('data'));
-            })
-            ->editColumn('name', function ($data) {
-                return '<strong><a href="' . route('admin.announces.edit', $data->id) . '">' . $data->name . '</a></strong>';
+            ->editColumn('content', function ($data) {
+                return '<a href="' . route('admin.announces.edit', $data->id) . '">' . $data->content . '</a>';
             })
             ->editColumn('price', function ($data) {
                 if ($data->price) {
@@ -242,18 +241,20 @@ class AnnouncesController extends AdminController
                 }
                 return 'Договорная';
             })
+            ->addColumn('user_name', function ($data) {
+                return $data->user ? $data->user->name : $data->title;
+            })
+            ->addColumn('status_label', function ($data) {
+                return '<span class="badge bg-' . $data->status->color() . '">' .
+                       $data->status->label() . '</span>';
+            })
             ->editColumn('category_id', function ($data) {
                 return $data->category ? $data->category->title : '-';
-            })
-            ->editColumn('check', function ($data) {
-                return $data->check
-                    ? '<span class="badge bg-success">Активно</span>'
-                    : '<span class="badge bg-secondary">Неактивно</span>';
             })
             ->editColumn('updated_at', function ($data) {
                 return $data->updated_at->format('d.m.Y H:i');
             })
-            ->rawColumns(['responses_count', 'name', 'check', 'action'])
+            ->rawColumns(['responses_count', 'content', 'status_label'])
             ->make(true);
     }
 
@@ -272,5 +273,26 @@ class AnnouncesController extends AdminController
                 return $response->created_at->format('d.m.Y H:i');
             })
             ->make(true);
+    }
+
+    /**
+     * Update announce status
+     *
+     * @param int $id
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateStatus($id, Request $request)
+    {
+        $announce = $this->module_model::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:' . implode(',', \App\Enums\AnnounceStatus::values())
+        ]);
+
+        $announce->status = $request->status;
+        $announce->save();
+
+        return response()->json(['success' => true]);
     }
 }

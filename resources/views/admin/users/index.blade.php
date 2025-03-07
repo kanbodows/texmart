@@ -79,12 +79,9 @@
 @endsection
 
 @push("after-styles")
-    <link rel="stylesheet" href="{{ asset("vendor/datatable/datatables.min.css") }}" />
 @endpush
 
 @push("after-scripts")
-    <script type="module" src="{{ asset("vendor/datatable/datatables.min.js") }}"></script>
-    <script src="{{ asset('js/admin/common.js') }}"></script>
 
     <script>
         $(document).ready(function() {

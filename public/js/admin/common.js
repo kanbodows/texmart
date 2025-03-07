@@ -88,7 +88,7 @@ function autoSelectUserFromUrl(table) {
 /**
  * Инициализация базовой DataTable
  */
-function initDataTable(options) {
+function initDataTable(options, selector = '#datatable') {
     const defaultOptions = {
         processing: true,
         serverSide: true,
@@ -97,11 +97,29 @@ function initDataTable(options) {
         pageLength: 50,
         order: [[0, 'desc']],
         language: {
-            url: 'https://cdn.datatables.net/plug-ins/2.2.2/i18n/ru.json'
-        }
+            processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>',
+            search: 'Поиск:',
+            lengthMenu: 'Показать _MENU_ записей',
+            info: 'Записи с _START_ до _END_ из _TOTAL_ записей',
+            infoEmpty: 'Записи с 0 до 0 из 0 записей',
+            infoFiltered: '(отфильтровано из _MAX_ записей)',
+            loadingRecords: 'Загрузка записей...',
+            zeroRecords: 'Записи отсутствуют.',
+            emptyTable: 'В таблице отсутствуют данные',
+            paginate: {
+                first: '«',
+                previous: '‹',
+                next: '›',
+                last: '»'
+            },
+            aria: {
+                sortAscending: ': активировать для сортировки столбца по возрастанию',
+                sortDescending: ': активировать для сортировки столбца по убыванию'
+            }
+        },
     };
 
-    return $('#datatable').DataTable({...defaultOptions, ...options});
+    return $(selector).DataTable({...defaultOptions, ...options});
 }
 
 class DatatableModal {

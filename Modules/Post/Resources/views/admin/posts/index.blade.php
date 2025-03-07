@@ -61,52 +61,40 @@
     </div>
 @endsection
 
-@push("after-styles")
-    <!-- DataTables Core and Extensions -->
-    <link href="{{ asset("vendor/datatable/datatables.min.css") }}" rel="stylesheet" />
-@endpush
-
 @push("after-scripts")
-    <!-- DataTables Core and Extensions -->
-    <script type="module" src="{{ asset("vendor/datatable/datatables.min.js") }}"></script>
-
     <script type="module">
-        $('#datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            ajax: '{{ route("admin.$module_name.index_data") }}',
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.2.2/i18n/ru.json'
-            },
-            columns: [
-                {
-                    data: 'id',
-                    name: 'id',
-                },
-                {
-                    data: 'image',
-                    name: 'image',
-                    render: function(data, type, row) {
-                        return `<img src="${data}" alt="Изображение новости" class="img-fluid" style="max-height: 50px;">`;
+        $(document).ready(function() {
+            const table = initDataTable({
+                ajax: '{{ route("admin.$module_name.index_data") }}',
+                columns: [
+                    {
+                        data: 'id',
+                        name: 'id',
                     },
-                    orderable: false,
-                },
-                {
-                    data: 'name',
-                    name: 'name',
-                },
-                {
-                    data: 'updated_at',
-                    name: 'updated_at',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false,
-                },
-            ],
+                    {
+                        data: 'image',
+                        name: 'image',
+                        render: function(data, type, row) {
+                            return `<img src="${data}" alt="Изображение новости" class="img-fluid" style="max-height: 50px;">`;
+                        },
+                        orderable: false,
+                    },
+                    {
+                        data: 'title',
+                        name: 'title',
+                    },
+                    {
+                        data: 'updated_at',
+                        name: 'updated_at',
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                    },
+                ],
+            });
         });
     </script>
 @endpush

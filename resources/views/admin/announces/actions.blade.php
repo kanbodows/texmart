@@ -14,11 +14,11 @@
     </a>
     <a
         href="{{ route("admin.announces.edit", $data) }}"
-        class="btn btn-primary btn-sm mt-1"
-        data-toggle="tooltip"
-        title="{{ __("labels.admin.edit") }}"
+        class="btn btn-warning btn-sm"
+        data-bs-toggle="tooltip"
+        title="Редактировать"
     >
-        <i class="fas fa-wrench"></i>
+        <i class="fas fa-edit"></i>
     </a>
 
     <form action="{{ route('admin.announces.destroy', $data->id) }}"

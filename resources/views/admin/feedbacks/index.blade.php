@@ -65,16 +65,15 @@
             <div class="row mt-4">
                 <div class="col">
                     <div class="table-responsive">
-                        <table class="table-bordered table-hover table" id="datatable">
+                        <table class="table table-hover" id="datatable">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Заказчик</th>
+                                    <th>Пользователь</th>
                                     <th>Производитель</th>
                                     <th>Оценка</th>
                                     <th>Отзыв</th>
                                     <th>Дата</th>
-                                    <th width="15%">Действия</th>
                                 </tr>
                             </thead>
                         </table>
@@ -83,32 +82,15 @@
             </div>
         </div>
     </div>
-
-    @component('admin.components.modal-datatable', [
-        'id' => 'feedbackDetailsModal',
-        'title' => 'Детали отзыва',
-        'columns' => [
-            'key' => 'Параметр',
-            'value' => 'Значение'
-        ]
-    ])
-    @endcomponent
 @endsection
 
 @push('after-styles')
-    <link href="{{ asset('vendor/datatable/datatables.min.css') }}" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
 @endpush
 
 @push('after-scripts')
-    <script type="module" src="{{ asset('vendor/datatable/datatables.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('js/admin/datatable-modal.js') }}"></script>
-    <script src="{{ asset('js/admin/common.js') }}"></script>
-
     <script>
         $(document).ready(function() {
-            // Инициализация Select2 для пользователей
+            // Инициализация Select2
             initSelect2('.select2-user', {
                 placeholder: 'Выберите пользователя',
                 ajax: {
@@ -116,7 +98,6 @@
                 }
             });
 
-            // Инициализация Select2 для производителей
             initSelect2('.select2-manufacturer', {
                 placeholder: 'Выберите производителя',
                 ajax: {
@@ -147,8 +128,10 @@
                     {data: 'rating_stars', name: 'rating'},
                     {data: 'feedback', name: 'feedback'},
                     {data: 'created_at', name: 'created_at'},
-                    {data: 'action', name: 'action'}
-                ]
+                ],
+                createdRow: function(row, data) {
+                    $(row).attr('data-id', data.id);
+                }
             });
 
             // Инициализация фильтров
@@ -156,6 +139,58 @@
                 select2Selectors: ['.select2-user', '.select2-manufacturer']
             });
             autoSelectUserFromUrl(table);
+
+            // Контекстное меню
+            $.contextMenu({
+                selector: '#datatable tbody tr',
+                callback: function (key, options) {
+                    const id = $(this).data('id');
+                    switch(key) {
+                        case "view":
+                            window.location.href = '{{ route("admin.feedbacks.show", "") }}/' + id;
+                            break;
+                        case "delete":
+                            if (confirm('Вы уверены?')) {
+                                $.ajax({
+                                    url: '{{ route("admin.feedbacks.destroy", "") }}/' + id,
+                                    type: 'DELETE',
+                                    data: {
+                                        _token: '{{ csrf_token() }}'
+                                    },
+                                    success: function() {
+                                        table.ajax.reload();
+                                    }
+                                });
+                            }
+                            break;
+                    }
+                },
+                items: {
+                    "view": {
+                        name: "Просмотр",
+                        icon: "fas fa-eye"
+                    },
+                    "sep1": "---------",
+                    "delete": {
+                        name: "Удалить",
+                        icon: "fas fa-trash",
+                        className: 'context-menu-item-danger'
+                    }
+                }
+            });
+
+            // Подсветка выбранной строки
+            $('#datatable tbody').on('contextmenu', 'tr', function() {
+                $(this).siblings().removeClass('selected-row');
+                $(this).addClass('selected-row');
+            });
+
+            // Снятие подсветки при клике вне таблицы
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#datatable').length) {
+                    $('#datatable tbody tr').removeClass('selected-row');
+                }
+            });
         });
     </script>
 @endpush

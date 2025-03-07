@@ -58,13 +58,10 @@ class FeedbacksController extends AdminController
                 }
                 return '<span class="text-warning">' . $stars . '</span>';
             })
-            ->addColumn('action', function ($data) {
-                return view('admin.feedbacks.actions', compact('data'));
-            })
             ->editColumn('created_at', function ($data) {
                 return $data->created_at->format('d.m.Y H:i');
             })
-            ->rawColumns(['rating_stars', 'action'])
+            ->rawColumns(['rating_stars'])
             ->make(true);
     }
 

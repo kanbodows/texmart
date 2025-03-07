@@ -47,9 +47,11 @@
                         <div class="col-md-2">
                             <select class="form-select filter" data-column="status">
                                 <option value="">Все статусы</option>
-                                <option value="active">Активные</option>
-                                <option value="inactive">Неактивные</option>
+                                <option value="draft">Черновик</option>
                                 <option value="moderation">На модерации</option>
+                                <option value="active">Активно</option>
+                                <option value="inactive">Неактивно</option>
+                                <option value="rejected">Отклонено</option>
                             </select>
                         </div>
                     </div>
@@ -73,16 +75,16 @@
             <div class="row mt-4">
                 <div class="col">
                     <div class="table-responsive">
-                        <table class="table-bordered table-hover table" id="datatable">
+                        <table class="table table-hover table-bordered" id="datatable">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Название</th>
+                                    <th>Заголовок</th>
+                                    <th>Пользователь</th>
                                     <th>Категория</th>
                                     <th>Цена</th>
                                     <th>Статус</th>
-                                    <th>Обновлено</th>
-                                    <th width="15%">Действия</th>
+                                    <th>Дата</th>
                                 </tr>
                             </thead>
                         </table>
@@ -114,18 +116,7 @@
     @endcomponent
 @endsection
 
-@push("after-styles")
-    <!-- DataTables Core and Extensions -->
-    <link href="{{ asset("vendor/datatable/datatables.min.css") }}" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
-@endpush
-
 @push("after-scripts")
-    <!-- DataTables Core and Extensions -->
-    <script type="module" src="{{ asset("vendor/datatable/datatables.min.js") }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('js/admin/common.js') }}"></script>
-
     <script>
         $(document).ready(function() {
             // Инициализация Select2
@@ -148,21 +139,147 @@
                 },
                 columns: [
                     {data: 'id', name: 'id'},
-                    {data: 'title', name: 'title'},
+                    {data: 'content', name: 'content'},
+                    {data: 'user_name', name: 'user_name'},
                     {data: 'category_id', name: 'category_id'},
                     {data: 'price', name: 'price'},
-                    {data: 'check', name: 'check'},
+                    {data: 'status_label', name: 'status'},
                     {data: 'updated_at', name: 'updated_at'},
-                    {data: 'action', name: 'action'}
-                ]
+                ],
+                createdRow: function(row, data) {
+                    $(row).attr('data-id', data.id);
+                    $(row).attr('data-status', data.status);
+                }
             });
 
             // Инициализация фильтров
-            initFilters(table);
+            initFilters(table, {
+                select2Selectors: ['.select2-user']
+            });
             autoSelectUserFromUrl(table);
 
-            // Инициализация модальной таблицы откликов
-            new DatatableModal({
+            // Функция обновления статуса
+            function updateStatus(id, status) {
+                $.ajax({
+                    url: '/admin/announces/' + id + '/status',
+                    type: 'PATCH',
+                    data: { status: status },
+                    success: function() {
+                        table.ajax.reload();
+                    },
+                    error: function(xhr) {
+                        console.error('Ошибка при обновлении статуса:', xhr);
+                        alert('Произошла ошибка при обновлении статуса');
+                    }
+                });
+            }
+
+            // Инициализация контекстного меню
+            initContextMenu(table, {
+                callback: function(key, options) {
+                    const id = $(this).data('id');
+                    const status = $(this).data('status');
+
+                    switch(key) {
+                        case "edit":
+                            window.location.href = '/admin/announces/' + id + '/edit';
+                            break;
+                        case "responses":
+                            // Получаем данные для модального окна
+                            const modal = $('#responsesModal');
+                            const responsesTable = modal.find('table').DataTable();
+
+                            // Обновляем данные таблицы
+                            responsesTable.ajax.url('{{ route("admin.announces.responses", "") }}/' + id).load();
+
+                            // Показываем модальное окно
+                            modal.modal('show');
+                            break;
+                        case "activate":
+                            updateStatus(id, 'active');
+                            break;
+                        case "deactivate":
+                            updateStatus(id, 'inactive');
+                            break;
+                        case "approve":
+                            updateStatus(id, 'active');
+                            break;
+                        case "reject":
+                            updateStatus(id, 'rejected');
+                            break;
+                        case "delete":
+                            if (confirm('Вы уверены?')) {
+                                $.ajax({
+                                    url: '/admin/announces/' + id,
+                                    type: 'DELETE',
+                                    success: function() {
+                                        table.ajax.reload();
+                                    },
+                                    error: function(xhr) {
+                                        console.error('Ошибка при удалении:', xhr);
+                                        alert('Произошла ошибка при удалении');
+                                    }
+                                });
+                            }
+                            break;
+                    }
+                },
+                items: {
+                    "edit": {
+                        name: "Редактировать",
+                        icon: "fas fa-edit"
+                    },
+                    "responses": {
+                        name: "Отклики",
+                        icon: "fas fa-comments"
+                    },
+                    "sep1": "---------",
+                    "status": {
+                        name: "Статус",
+                        icon: "fas fa-toggle-on",
+                        items: {
+                            "activate": {
+                                name: "Активировать",
+                                icon: "fas fa-check",
+                                disabled: function(key, opt) {
+                                    return $(this).data('status') === 'active';
+                                }
+                            },
+                            "deactivate": {
+                                name: "Деактивировать",
+                                icon: "fas fa-times",
+                                disabled: function(key, opt) {
+                                    return $(this).data('status') === 'inactive';
+                                }
+                            },
+                            "approve": {
+                                name: "Одобрить",
+                                icon: "fas fa-check-circle",
+                                disabled: function(key, opt) {
+                                    return $(this).data('status') !== 'moderation';
+                                }
+                            },
+                            "reject": {
+                                name: "Отклонить",
+                                icon: "fas fa-ban",
+                                disabled: function(key, opt) {
+                                    return $(this).data('status') !== 'moderation';
+                                }
+                            }
+                        }
+                    },
+                    "sep2": "---------",
+                    "delete": {
+                        name: "Удалить",
+                        icon: "fas fa-trash",
+                        className: 'context-menu-item-danger'
+                    }
+                }
+            });
+
+            // Инициализация таблицы откликов в модальном окне
+           // Инициализация модальной таблицы откликов
+           new DatatableModal({
                 modalId: 'responsesModal',
                 buttonSelector: '.responses-badge',
                 url: '{{ route("admin.announces.responses", "") }}',

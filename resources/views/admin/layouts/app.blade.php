@@ -31,6 +31,10 @@
         </style>
 
         <!-- General CSS -->
+        <!-- DataTables Core and Extensions -->
+        <link href="{{ asset("vendor/datatable/datatables.min.css") }}" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.css">
         <link href="{{ asset('css/admin/style.css') }}" rel="stylesheet">
         @stack('after-styles')
 
@@ -71,7 +75,22 @@
         <!-- Scripts -->
         @livewireScripts
 
-        @stack("after-scripts")
+
         <!-- / Scripts -->
+        <script type="module" src="{{ asset("vendor/datatable/datatables.min.js") }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.js"></script>
+        <script src="{{ asset('js/admin/common.js') }}"></script>
+        <script src="{{ asset('js/admin/context-menu.js') }}"></script>
+
+        <script>
+            // Настройка CSRF-токена для всех Ajax запросов
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            });
+        </script>
+        @stack("after-scripts")
     </body>
 </html>

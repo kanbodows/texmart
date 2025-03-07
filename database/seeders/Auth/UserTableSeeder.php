@@ -24,7 +24,7 @@ class UserTableSeeder extends Seeder
 
         $users = [
             [
-                'id' => 1,
+                'id' => 4,
                 'username' => '100001',
                 'name' => 'Super Admin',
                 'email' => 'super@admin.com',
@@ -34,7 +34,7 @@ class UserTableSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'id' => 2,
+                'id' => 5,
                 'username' => '100002',
                 'name' => 'Admin Istrator',
                 'email' => 'admin@admin.com',
@@ -44,7 +44,7 @@ class UserTableSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'id' => 3,
+                'id' => 6,
                 'username' => '100003',
                 'name' => 'Manager User',
                 'email' => 'manager@manager.com',
@@ -54,7 +54,7 @@ class UserTableSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'id' => 4,
+                'id' => 7,
                 'username' => '100004',
                 'name' => 'Executive User',
                 'email' => 'executive@executive.com',
@@ -64,7 +64,7 @@ class UserTableSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'id' => 5,
+                'id' => 8,
                 'username' => '100005',
                 'name' => 'General User',
                 'email' => 'user@user.com',

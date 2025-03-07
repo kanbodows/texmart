@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Modules\Post\Enums\PostStatus;
 use Modules\Post\Enums\PostType;
+use Yajra\DataTables\DataTables;
+use Carbon\Carbon;
 
 class PostsController extends AdminBaseController
 {
@@ -39,7 +41,7 @@ class PostsController extends AdminBaseController
         $module_name_singular = Str::singular($this->module_name);
 
         $validated_data = $request->validate([
-            'name' => 'required|max:191',
+            'title' => 'required|max:191',
             'slug' => 'nullable|max:191',
             'created_by_alias' => 'nullable|max:191',
             'intro' => 'required',
@@ -87,7 +89,7 @@ class PostsController extends AdminBaseController
         $module_name_singular = Str::singular($this->module_name);
 
         $validated_data = $request->validate([
-            'name' => 'required|max:191',
+            'title' => 'required|max:191',
             'slug' => 'nullable|max:191',
             'created_by_alias' => 'nullable|max:191',
             'intro' => 'required',
@@ -119,5 +121,27 @@ class PostsController extends AdminBaseController
         logUserAccess($this->module_title.' Update | Id: '.$$module_name_singular->id);
 
         return redirect()->route("admin.{$this->module_name}.show", $$module_name_singular->id);
+    }
+
+    public function index_data()
+    {
+        $module_name = $this->module_name;
+        $module_model = $this->module_model;
+
+        $$module_name = $module_model::query();
+
+        return Datatables::of($$module_name)
+            ->addColumn('action', function ($data) {
+                $module_name = $this->module_name;
+
+                return view('admin.includes.action_column', compact('module_name', 'data'));
+            })
+            ->editColumn('title', '<strong>{{$title}}</strong>')
+            ->editColumn('updated_at', function ($data) {
+                return $data->updated_at->format('d.m.Y H:i');
+            })
+            ->rawColumns(['title', 'action'])
+            ->orderColumns(['id'], '-:column $1')
+            ->make(true);
     }
 }

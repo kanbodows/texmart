@@ -47,14 +47,9 @@
 @endsection
 
 @push('after-styles')
-    <link href="{{ asset('vendor/datatable/datatables.min.css') }}" rel="stylesheet" />
 @endpush
 
 @push('after-scripts')
-    <script src="{{ asset('vendor/datatable/datatables.min.js') }}"></script>
-    <script src="{{ asset('js/admin/datatable-modal.js') }}"></script>
-    <script src="{{ asset('js/admin/common.js') }}"></script>
-
     <script>
         $(document).ready(function() {
             const table = initDataTable({
