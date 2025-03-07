@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserStatus;
 use App\Models\Presenters\UserPresenter;
 use App\Models\Traits\HasHashedMediaTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -50,6 +51,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
             'date_of_birth' => 'datetime',
             'last_login' => 'datetime',
             'deleted_at' => 'datetime',
+            'status' => UserStatus::class,
         ];
     }
 
@@ -67,6 +69,9 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         // create a event to happen on creating
         static::creating(function ($table) {
             $table->created_by = Auth::id();
+            if (!isset($table->status)) {
+                $table->status = UserStatus::INACTIVE;
+            }
         });
 
         // create a event to happen on updating
@@ -103,4 +108,23 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     {
         return array_map('intval', $this->roles->pluck('id')->toArray());
     }
+
+    public function getStatusLabelAttribute()
+    {
+        return $this->status->label();
+    }
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'status',
+        'mobile',
+        // ... other fields ...
+    ];
 }

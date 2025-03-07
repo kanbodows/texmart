@@ -46,6 +46,7 @@
 }
 .context-menu-item.context-menu-hover {
     background-color: #f8f9fa;
+    color: #6c757d;
 }
 .context-menu-item.context-menu-disabled {
     color: #6c757d;
@@ -57,6 +58,9 @@
 }
 .selected-row {
     background-color: rgba(0, 123, 255, 0.1) !important;
+}
+.context-menu-hover i {
+    color: #6c757d !important;
 }
 
 /* Другие общие стили админки можно добавлять здесь */

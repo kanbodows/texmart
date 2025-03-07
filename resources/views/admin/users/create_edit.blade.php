@@ -55,30 +55,14 @@
                             {{-- Имя --}}
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="first_name" class="form-label">Имя <span class="text-danger">*</span></label>
+                                    <label for="name" class="form-label">Имя <span class="text-danger">*</span></label>
                                     <input type="text"
-                                           name="first_name"
-                                           id="first_name"
-                                           class="form-control @error('first_name') is-invalid @enderror"
-                                           value="{{ old('first_name', $user->first_name ?? '') }}"
+                                           name="name"
+                                           id="name"
+                                           class="form-control @error('name') is-invalid @enderror"
+                                           value="{{ old('name', $user->name ?? '') }}"
                                            required>
-                                    @error('first_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            {{-- Фамилия --}}
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="last_name" class="form-label">Фамилия <span class="text-danger">*</span></label>
-                                    <input type="text"
-                                           name="last_name"
-                                           id="last_name"
-                                           class="form-control @error('last_name') is-invalid @enderror"
-                                           value="{{ old('last_name', $user->last_name ?? '') }}"
-                                           required>
-                                    @error('last_name')
+                                    @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -260,7 +244,7 @@
                                                                     id="{{ "role-" . $role->id }}"
                                                                     name="roles[]"
                                                                     type="checkbox"
-                                                                    value="{{ $role->name }}"
+                                                                    value="{{ $role->id }}"
                                                                     {{ (isset($user) && in_array($role->name, $user->roles->pluck('name')->toArray())) || (is_array(old('roles')) && in_array($role->name, old('roles'))) ? "checked" : "" }}
                                                                 />
                                                                 <label

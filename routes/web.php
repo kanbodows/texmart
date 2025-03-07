@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SellersConfController;
 use App\Http\Controllers\Admin\AnnouncesController;
 use App\Http\Controllers\Admin\PaymentsController;
+use App\Http\Controllers\Admin\UsersController;
 
 /*
 *
@@ -147,7 +148,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 
     Route::patch("{$module_name}/{id}/block", ['as' => "{$module_name}.block", 'uses' => "{$controller_name}@block", 'middleware' => ['can:block_users']]);
     Route::patch("{$module_name}/{id}/unblock", ['as' => "{$module_name}.unblock", 'uses' => "{$controller_name}@unblock", 'middleware' => ['can:block_users']]);
     Route::resource("{$module_name}", "{$controller_name}");
-
+    Route::patch("{$module_name}/{user}/update-ajax", ['as' => "{$module_name}.updateAjax", 'uses' => "{$controller_name}@updateAjax"]);
 
    /**
     * Объявления

@@ -1,8 +1,7 @@
 @extends("admin.layouts.app")
 
 @section("title")
-    {{ $$module_name_singular->name }} - {{ $$module_name_singular->username }} - {{ __($module_action) }}
-    {{ __($module_title) }}
+    {{ $$module_name_singular->name }} - {{ $$module_name_singular->username }}
 @endsection
 
 @section("breadcrumbs")
@@ -12,8 +11,7 @@
         </x-admin.breadcrumb-item>
 
         <x-admin.breadcrumb-item type="active">
-            {{ __($module_title) }}
-            {{ __($module_action) }}
+            Просмотр пользователя
         </x-admin.breadcrumb-item>
     </x-admin.breadcrumbs>
 @endsection
@@ -23,7 +21,7 @@
         <x-admin.section-header>
             <i class="{{ $module_icon }}"></i>
             {{ $$module_name_singular->name }}
-            <small class="text-muted">{{ __($module_title) }} {{ __($module_action) }}</small>
+            <small class="text-muted">Просмотр пользователя</small>
 
             <x-slot name="toolbar">
                 <x-admin.buttons.return-back :small="true" />
@@ -31,13 +29,13 @@
                     class="btn btn-primary btn-sm m-1"
                     data-toggle="tooltip"
                     href="{{ route("admin.users.index") }}"
-                    title="List"
+                    title="Список"
                 >
                     <i class="fas fa-list"></i>
-                    List
+                    Список
                 </a>
                 <x-buttons.edit
-                    title="{{ __('Edit') }} {{ ucwords(Str::singular($module_name)) }}"
+                    title="Редактировать пользователя"
                     route='{!! route("admin.$module_name.edit", $$module_name_singular) !!}'
                     :small="true"
                 />
@@ -49,7 +47,7 @@
                 <div class="table-responsive">
                     <table class="table-bordered table-hover table">
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.avatar") }}</th>
+                            <th>Аватар</th>
                             <td>
                                 <img
                                     class="user-profile-image img-fluid img-thumbnail"
@@ -61,51 +59,47 @@
 
                         @php
                             $fields_array = [
-                                ["name" => "username", "type" => "text"],
-                                ["name" => "name", "type" => "text"],
-                                ["name" => "email", "type" => "text"],
-                                ["name" => "mobile", "type" => "text"],
-                                ["name" => "gender", "type" => "text"],
-                                ["name" => "date_of_birth", "type" => "date"],
-                                ["name" => "address", "type" => "text"],
-                                ["name" => "bio", "type" => "text"],
-                                ["name" => "last_ip", "type" => "text"],
-                                ["name" => "login_count", "type" => "text"],
-                                ["name" => "last_login", "type" => "datetime"],
+                                ["name" => "username", "label" => "Логин"],
+                                ["name" => "name", "label" => "Имя"],
+                                ["name" => "email", "label" => "Email"],
+                                ["name" => "mobile", "label" => "Телефон"],
+                                ["name" => "gender", "label" => "Пол"],
+                                ["name" => "date_of_birth", "label" => "Дата рождения"],
+                                ["name" => "address", "label" => "Адрес"],
+                                ["name" => "bio", "label" => "О себе"],
+                                ["name" => "last_ip", "label" => "Последний IP"],
+                                ["name" => "login_count", "label" => "Количество входов"],
+                                ["name" => "last_login", "label" => "Последний вход"],
                             ];
                         @endphp
 
                         @foreach ($fields_array as $item)
-                            @php
-                                $field_name = $item["name"];
-                            @endphp
-
                             <tr>
-                                <th>{{ __(label_case($field_name)) }}</th>
-                                <td>{{ $user->$field_name }}</td>
+                                <th>{{ $item['label'] }}</th>
+                                <td>{{ $user->{$item['name']} }}</td>
                             </tr>
                         @endforeach
 
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.password") }}</th>
+                            <th>Пароль</th>
                             <td>
                                 <a
                                     class="btn btn-outline-primary btn-sm"
                                     href="{{ route("admin.users.changePassword", $user->id) }}"
                                 >
-                                    Change password
+                                    Изменить пароль
                                 </a>
                             </td>
                         </tr>
 
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.social") }}</th>
+                            <th>Соц. сети</th>
                             <td>
                                 <ul class="list-unstyled">
                                     @foreach ($user->providers as $provider)
                                         <li>
                                             <i class="fab fa-{{ $provider->provider }}"></i>
-                                            {{ label_case($provider->provider) }}
+                                            {{ $provider->provider }}
                                         </li>
                                     @endforeach
                                 </ul>
@@ -113,12 +107,12 @@
                         </tr>
 
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.status") }}</th>
+                            <th>Статус</th>
                             <td>{!! $user->status_label !!}</td>
                         </tr>
 
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.confirmed") }}</th>
+                            <th>Подтверждение</th>
                             <td>
                                 {!! $user->confirmed_label !!}
                                 @if ($user->email_verified_at == null)
@@ -126,16 +120,16 @@
                                             class="btn btn-primary btn-sm mt-1"
                                             data-toggle="tooltip"
                                             href="{{ route("admin.users.emailConfirmationResend", $user->id) }}"
-                                            title="Send Confirmation Email"
+                                            title="Отправить письмо подтверждения"
                                         >
                                             <i class="fas fa-envelope"></i>
-                                            Send Confirmation Reminder
+                                            Отправить напоминание
                                         </a>
                                 @endif
                             </td>
                         </tr>
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.roles") }}</th>
+                            <th>Роли</th>
                             <td>
                                 @if ($user->getRoleNames()->count() > 0)
                                     <ul>
@@ -147,7 +141,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.permissions") }}</th>
+                            <th>Разрешения</th>
                             <td>
                                 @if ($user->getAllPermissions()->count() > 0)
                                     <ul>
@@ -160,28 +154,28 @@
                         </tr>
 
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.created_at") }}</th>
+                            <th>Дата создания</th>
                             <td>
-                                {{ $user->created_at }} by User:{{ $user->created_by }}
+                                {{ $user->created_at }} Пользователь:{{ $user->created_by }}
                                 <br />
                                 <small>({{ $user->created_at->diffForHumans() }})</small>
                             </td>
                         </tr>
 
                         <tr>
-                            <th>{{ __("labels.admin.users.fields.updated_at") }}</th>
+                            <th>Дата обновления</th>
                             <td>
-                                {{ $user->updated_at }} by User:{{ $user->updated_by }}
+                                {{ $user->updated_at }} Пользователь:{{ $user->updated_by }}
                                 <br />
                                 <small>({{ $user->updated_at->diffForHumans() }})</small>
                             </td>
                         </tr>
 
                         <tr>
-                            <th>{{ __("Deleted At") }}</th>
+                            <th>Дата удаления</th>
                             <td>
                                 @if ($user->deleted_at != null)
-                                        {{ $user->deleted_at }} by User:{{ $user->deleted_by }}
+                                        {{ $user->deleted_at }} Пользователь:{{ $user->deleted_by }}
                                         <br />
                                         <small>({{ $user->deleted_at->diffForHumans() }})</small>
                                 @endif
@@ -197,12 +191,12 @@
                             data-method="PATCH"
                             data-token="{{ csrf_token() }}"
                             data-toggle="tooltip"
-                            data-confirm="Are you sure?"
+                            data-confirm="Вы уверены?"
                             href="{{ route("admin.users.block", $user) }}"
-                            title="{{ __("labels.admin.block") }}"
+                            title="Заблокировать"
                         >
                             <i class="fas fa-ban"></i>
-                            @lang("Block")
+                            Заблокировать
                         </a>
                     @endif
 
@@ -212,12 +206,12 @@
                             data-method="PATCH"
                             data-token="{{ csrf_token() }}"
                             data-toggle="tooltip"
-                            data-confirm="Are you sure?"
+                            data-confirm="Вы уверены?"
                             href="{{ route("admin.users.unblock", $user) }}"
-                            title="{{ __("labels.admin.unblock") }}"
+                            title="Разблокировать"
                         >
                             <i class="fas fa-check"></i>
-                            @lang("Unblock")
+                            Разблокировать
                         </a>
                     @endif
 
@@ -226,22 +220,22 @@
                         data-method="DELETE"
                         data-token="{{ csrf_token() }}"
                         data-toggle="tooltip"
-                        data-confirm="Are you sure?"
+                        data-confirm="Вы уверены?"
                         href="{{ route("admin.users.destroy", $user) }}"
-                        title="{{ __("labels.admin.delete") }}"
+                        title="Удалить"
                     >
                         <i class="fas fa-trash-alt"></i>
-                        @lang("Delete")
+                        Удалить
                     </a>
                     @if ($user->email_verified_at == null)
                         <a
                             class="btn btn-primary mt-1"
                             data-toggle="tooltip"
                             href="{{ route("admin.users.emailConfirmationResend", $user->id) }}"
-                            title="Send Confirmation Email"
+                            title="Отправить письмо подтверждения"
                         >
                             <i class="fas fa-envelope"></i>
-                            @lang("Email Confirmation")
+                            Подтверждение Email
                         </a>
                     @endif
                 </div>

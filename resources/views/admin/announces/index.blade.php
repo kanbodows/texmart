@@ -47,11 +47,9 @@
                         <div class="col-md-2">
                             <select class="form-select filter" data-column="status">
                                 <option value="">Все статусы</option>
-                                <option value="draft">Черновик</option>
-                                <option value="moderation">На модерации</option>
-                                <option value="active">Активно</option>
-                                <option value="inactive">Неактивно</option>
-                                <option value="rejected">Отклонено</option>
+                                @foreach(App\Enums\AnnounceStatus::cases() as $status)
+                                    <option value="{{ $status->value }}">{{ $status->label() }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -89,16 +87,6 @@
                             </thead>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="card-footer">
-            <div class="row">
-                <div class="col-7">
-                    <div class="float-left"></div>
-                </div>
-                <div class="col-5">
-                    <div class="float-end"></div>
                 </div>
             </div>
         </div>
@@ -158,6 +146,76 @@
             });
             autoSelectUserFromUrl(table);
 
+            // Инициализация контекстного меню
+            initContextMenu(table, {
+                items: {
+                    edit: {},
+                    responses: {
+                        name: "Отклики",
+                        icon: "fas fa-comments"
+                    },
+                    "sep1": "---------",
+                    status: {
+                        name: "Статус",
+                        icon: "fas fa-toggle-on",
+                        items: {
+                            activate: {
+                                name: "{{ App\Enums\AnnounceStatus::ACTIVE->label() }}",
+                                icon: "fas fa-check",
+                                disabled: function(key, opt) {
+                                    return $(this).data('status') === '{{ App\Enums\AnnounceStatus::ACTIVE->value }}';
+                                }
+                            },
+                            deactivate: {
+                                name: "{{ App\Enums\AnnounceStatus::INACTIVE->label() }}",
+                                icon: "fas fa-times",
+                                disabled: function(key, opt) {
+                                    return $(this).data('status') === '{{ App\Enums\AnnounceStatus::INACTIVE->value }}';
+                                }
+                            },
+                            reject: {
+                                name: "{{ App\Enums\AnnounceStatus::REJECTED->label() }}",
+                                icon: "fas fa-ban",
+                                disabled: function(key, opt) {
+                                    return $(this).data('status') === '{{ App\Enums\AnnounceStatus::REJECTED->value }}';
+                                }
+                            }
+                        }
+                    },
+                    "sep2": "---------",
+                    delete: {}
+                },
+                callback: function(key, options) {
+                    const id = $(this).data('id');
+                    const status = $(this).data('status');
+
+                    // Используем дефолтные колбеки для стандартных действий
+                    if (['view', 'edit', 'delete'].includes(key)) {
+                        defaultCallbacks[key](id, table);
+                        return;
+                    }
+
+                    // Кастомные действия
+                    switch(key) {
+                        case "responses":
+                            const modal = $('#responsesModal');
+                            const responsesTable = modal.find('table').DataTable();
+                            responsesTable.ajax.url('{{ route("admin.announces.responses", "") }}/' + id).load();
+                            modal.modal('show');
+                            break;
+                        case "activate":
+                            updateStatus(id, '{{ App\Enums\AnnounceStatus::ACTIVE->value }}');
+                            break;
+                        case "deactivate":
+                            updateStatus(id, '{{ App\Enums\AnnounceStatus::INACTIVE->value }}');
+                            break;
+                        case "reject":
+                            updateStatus(id, '{{ App\Enums\AnnounceStatus::REJECTED->value }}');
+                            break;
+                    }
+                }
+            });
+
             // Функция обновления статуса
             function updateStatus(id, status) {
                 $.ajax({
@@ -173,109 +231,6 @@
                     }
                 });
             }
-
-            // Инициализация контекстного меню
-            initContextMenu(table, {
-                callback: function(key, options) {
-                    const id = $(this).data('id');
-                    const status = $(this).data('status');
-
-                    switch(key) {
-                        case "edit":
-                            window.location.href = '/admin/announces/' + id + '/edit';
-                            break;
-                        case "responses":
-                            // Получаем данные для модального окна
-                            const modal = $('#responsesModal');
-                            const responsesTable = modal.find('table').DataTable();
-
-                            // Обновляем данные таблицы
-                            responsesTable.ajax.url('{{ route("admin.announces.responses", "") }}/' + id).load();
-
-                            // Показываем модальное окно
-                            modal.modal('show');
-                            break;
-                        case "activate":
-                            updateStatus(id, 'active');
-                            break;
-                        case "deactivate":
-                            updateStatus(id, 'inactive');
-                            break;
-                        case "approve":
-                            updateStatus(id, 'active');
-                            break;
-                        case "reject":
-                            updateStatus(id, 'rejected');
-                            break;
-                        case "delete":
-                            if (confirm('Вы уверены?')) {
-                                $.ajax({
-                                    url: '/admin/announces/' + id,
-                                    type: 'DELETE',
-                                    success: function() {
-                                        table.ajax.reload();
-                                    },
-                                    error: function(xhr) {
-                                        console.error('Ошибка при удалении:', xhr);
-                                        alert('Произошла ошибка при удалении');
-                                    }
-                                });
-                            }
-                            break;
-                    }
-                },
-                items: {
-                    "edit": {
-                        name: "Редактировать",
-                        icon: "fas fa-edit"
-                    },
-                    "responses": {
-                        name: "Отклики",
-                        icon: "fas fa-comments"
-                    },
-                    "sep1": "---------",
-                    "status": {
-                        name: "Статус",
-                        icon: "fas fa-toggle-on",
-                        items: {
-                            "activate": {
-                                name: "Активировать",
-                                icon: "fas fa-check",
-                                disabled: function(key, opt) {
-                                    return $(this).data('status') === 'active';
-                                }
-                            },
-                            "deactivate": {
-                                name: "Деактивировать",
-                                icon: "fas fa-times",
-                                disabled: function(key, opt) {
-                                    return $(this).data('status') === 'inactive';
-                                }
-                            },
-                            "approve": {
-                                name: "Одобрить",
-                                icon: "fas fa-check-circle",
-                                disabled: function(key, opt) {
-                                    return $(this).data('status') !== 'moderation';
-                                }
-                            },
-                            "reject": {
-                                name: "Отклонить",
-                                icon: "fas fa-ban",
-                                disabled: function(key, opt) {
-                                    return $(this).data('status') !== 'moderation';
-                                }
-                            }
-                        }
-                    },
-                    "sep2": "---------",
-                    "delete": {
-                        name: "Удалить",
-                        icon: "fas fa-trash",
-                        className: 'context-menu-item-danger'
-                    }
-                }
-            });
 
             // Инициализация таблицы откликов в модальном окне
            // Инициализация модальной таблицы откликов

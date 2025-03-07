@@ -23,6 +23,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Response;
+use App\Enums\UserStatus;
 
 class UsersController extends AdminController
 {
@@ -65,6 +66,9 @@ class UsersController extends AdminController
                 if (!empty($request->email)) {
                     $query->where('users.email', 'like', "%{$request->email}%");
                 }
+                if (!empty($request->phone)) {
+                    $query->where('users.phone', 'like', "%{$request->phone}%");
+                }
                 if (!empty($request->status) && $request->status !== '') {
                     $query->where('users.status', $request->status);
                 }
@@ -74,8 +78,8 @@ class UsersController extends AdminController
                     });
                 }
             })
-            ->addColumn('status', function ($user) {
-                return $user->status ? '<span class="badge bg-success">Активный</span>' : '<span class="badge bg-danger">Неактивный</span>';
+            ->addColumn('status_name', function ($user) {
+                return $user->status_label;
             })
             ->addColumn('user_roles', function ($user) {
                 $roles = [];
@@ -84,10 +88,10 @@ class UsersController extends AdminController
                 }
                 return implode(' ', $roles);
             })
-            ->addColumn('action', function ($data) {
-                return view('admin.includes.user_actions', compact('data'));
-            })
-            ->rawColumns(['status', 'user_roles', 'action'])
+            // ->addColumn('action', function ($data) {
+            //     return view('admin.includes.user_actions', compact('data'));
+            // })
+            ->rawColumns(['status_name', 'user_roles'])
             ->make(true);
     }
 
@@ -142,8 +146,19 @@ class UsersController extends AdminController
      */
     public function store(Request $request)
     {
-        $user = User::create($request->validated());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+            'mobile' => 'nullable|string|max:20',
+            'status' => 'required|string',
+            'roles' => 'required|array'
+        ]);
+
+        $user = User::create($validated);
         $user->roles()->sync($request->input('roles', []));
+
+        flash('Пользователь успешно создан!')->success()->important();
 
         return redirect()->route('admin.users.index');
     }
@@ -190,8 +205,18 @@ class UsersController extends AdminController
      */
     public function update(Request $request, User $user)
     {
-        $user->update($request->validated());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'mobile' => 'nullable|string|max:20',
+            'status' => 'required|string',
+            'roles' => 'required|array'
+        ]);
+
+        $user->update($validated);
         $user->roles()->sync($request->input('roles', []));
+
+        flash('Пользователь успешно обновлен!')->success()->important();
 
         return redirect()->route('admin.users.index');
     }
@@ -234,7 +259,7 @@ class UsersController extends AdminController
      * @return Illuminate\Http\RedirectResponse
      *
      * @throws Exception There was a problem updating this user. Please try again.
-     */
+
     public function block($id)
     {
         if (! auth()->user()->can('delete_users')) {
@@ -252,7 +277,7 @@ class UsersController extends AdminController
         }
 
         $$this->module_name_singular = User::withTrashed()->find($id);
-        $$this->module_name_singular->status = 2;
+        $$this->module_name_singular->status = UserStatus::BLOCKED;
         $$this->module_name_singular->save();
 
         event(new UserUpdated($$this->module_name_singular));
@@ -271,7 +296,6 @@ class UsersController extends AdminController
      * @return RedirectResponse The redirect back to the previous page.
      *
      * @throws Exception If there is a problem updating the user.
-     */
     public function unblock($id)
     {
         if (! auth()->user()->can('delete_users')) {
@@ -289,7 +313,7 @@ class UsersController extends AdminController
         }
 
         $$this->module_name_singular = User::withTrashed()->find($id);
-        $$this->module_name_singular->status = 1;
+        $$this->module_name_singular->status = UserStatus::ACTIVE;
         $$this->module_name_singular->save();
 
         event(new UserUpdated($$this->module_name_singular));
@@ -299,7 +323,7 @@ class UsersController extends AdminController
         logUserAccess("{$this->module_title} {$module_action} {$$this->module_name_singular->name} ($id)");
 
         return redirect()->back();
-    }
+    } */
 
     /**
      * Destroy a user provider.
@@ -437,5 +461,47 @@ class UsersController extends AdminController
         logUserAccess("{$this->module_title} {$module_action} {$$this->module_name_singular->name} ($id)");
 
         return redirect("admin/{$this->module_name}/{$id}");
+    }
+
+    /**
+     * Update user fields via AJAX
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateAjax(Request $request, User $user)
+    {
+        abort_if(Gate::denies('user_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        try {
+
+            // Получаем только разрешенные поля
+            $fillable = array_intersect_key(
+                $request->all(),
+                array_flip($user->getFillable())
+            );
+
+            $user->update($fillable);
+
+            event(new UserUpdated($user));
+
+            flash('Пользователь успешно обновлен!')->success()->important();
+
+            logUserAccess("Сотрудники обновление {$user->name} ($user->id)");
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Пользователь успешно обновлен',
+                'user' => $user->fresh()
+            ]);
+        } catch (\Exception $e) {
+            flash('Ошибка при обновлении пользователя.' . $e->getMessage())->error()->important();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при обновлении пользователя: ' . $e->getMessage()
+            ], 422);
+        }
     }
 }
