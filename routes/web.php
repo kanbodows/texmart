@@ -71,8 +71,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 
      * Admin Dashboard
      * Namespaces indicate folder structure.
      */
-    Route::get('/', 'AdminController@index')->name('home');
-    Route::get('dashboard', 'AdminController@index')->name('dashboard');
+    Route::get('/', 'AdminController@index_dashboard')->name('home');
+    Route::get('dashboard', 'AdminController@index_dashboard')->name('dashboard');
 
     /*
      *
