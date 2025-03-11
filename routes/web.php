@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Frontend\FrontendController;
+use App\Http\Controllers\Frontend\ChatController;
 use App\Http\Controllers\LanguageController;
 use App\Livewire\Privacy;
 use App\Livewire\Terms;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Admin\SellersConfController;
 use App\Http\Controllers\Admin\AnnouncesController;
 use App\Http\Controllers\Admin\PaymentsController;
 use App\Http\Controllers\Admin\UsersController;
+use Illuminate\Support\Facades\Broadcast;
 
 /*
 *
@@ -57,6 +59,18 @@ Route::group(['namespace' => 'App\Http\Controllers\Frontend', 'as' => 'frontend.
         Route::get('profile/{username?}', ['as' => "{$module_name}.profile", 'uses' => "{$controller_name}@profile"]);
         Route::get("{$module_name}/emailConfirmationResend", ['as' => "{$module_name}.emailConfirmationResend", 'uses' => "{$controller_name}@emailConfirmationResend"]);
         Route::delete("{$module_name}/userProviderDestroy", ['as' => "{$module_name}.userProviderDestroy", 'uses' => "{$controller_name}@userProviderDestroy"]);
+
+        /*
+        *  Chat Routes
+        */
+        Route::get('/chat', ['as' => 'chat.index', 'uses' => 'ChatController@index']);
+        Route::get('/chat/{user}', ['as' => 'chat.show', 'uses' => 'ChatController@show']);
+        Route::post('/chat/{user}', ['as' => 'chat.store', 'uses' => 'ChatController@store']);
+        Route::post('/chat/{user}/read', ['as' => 'chat.read', 'uses' => 'ChatController@markAsRead']);
+        Route::get('/chat/unread-count', ['as' => 'chat.unread', 'uses' => 'ChatController@getUnreadCount']);
+
+        // Broadcasting Authentication
+        Broadcast::routes();
     });
 });
 
@@ -199,3 +213,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth', 'can:view_backend']], function () {
     \UniSharp\LaravelFilemanager\Lfm::routes();
 });
+
+// Маршруты чата
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{user}', [ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{user}', [ChatController::class, 'store'])->name('chat.store');
+    Route::post('/chat/{user}/read', [ChatController::class, 'markAsRead'])->name('chat.read');
+    Route::get('/chat/unread-count', [ChatController::class, 'getUnreadCount'])->name('chat.unread');
+});
+
+// Маршрут для авторизации WebSocket
+// Broadcast::routes(['middleware' => ['web', 'auth']]);

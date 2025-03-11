@@ -23,6 +23,7 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
         "nasirkhan/module-manager": "^2.0",
+        "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-activitylog": "^4.8",
         "spatie/laravel-backup": "^8.6",
         "spatie/laravel-html": "^3.6",
