@@ -4,17 +4,6 @@
     {{ $module_title }}
 @endsection
 
-@section("breadcrumbs")
-    <x-admin.breadcrumbs>
-        <x-admin.breadcrumb-item icon="{{ $module_icon }}">
-            Настройки
-        </x-admin.breadcrumb-item>
-        <x-admin.breadcrumb-item type="active">
-        {{ $module_title }}
-        </x-admin.breadcrumb-item>
-    </x-admin.breadcrumbs>
-@endsection
-
 @push("after-scripts")
 <script>
 $(function () {

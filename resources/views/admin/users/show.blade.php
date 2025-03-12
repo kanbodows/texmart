@@ -4,18 +4,6 @@
     {{ $$module_name_singular->name }} - {{ $$module_name_singular->username }}
 @endsection
 
-@section("breadcrumbs")
-    <x-admin.breadcrumbs>
-        <x-admin.breadcrumb-item route='{{ route("admin.$module_name.index") }}' icon="{{ $module_icon }}">
-            {{ $$module_name_singular->name }}
-        </x-admin.breadcrumb-item>
-
-        <x-admin.breadcrumb-item type="active">
-            Просмотр пользователя
-        </x-admin.breadcrumb-item>
-    </x-admin.breadcrumbs>
-@endsection
-
 @section("content")
     <x-admin.layouts.show :data="$user">
         <x-admin.section-header>

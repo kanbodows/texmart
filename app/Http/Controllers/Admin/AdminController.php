@@ -51,7 +51,7 @@ class AdminController extends Controller
     public function edit($id)
     {
         $module_name_singular = Str::singular($this->module_name ?? '');
-        $$module_name_singular = $this->module_model::findOrFail($object->id);
+        $$module_name_singular = $this->module_model::findOrFail($id);
         View::share('module_action', 'Изменение');
         return view('admin.'.$this->module_name.'.create_edit', compact("$module_name_singular"));
     }
