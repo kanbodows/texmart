@@ -1,9 +1,5 @@
 @extends("admin.layouts.app")
 
-@section("title")
-    {{ __($module_action) }}
-@endsection
-
 @section("breadcrumbs")
     <x-admin.breadcrumbs>
         <x-admin.breadcrumb-item type="active" icon="fas fa-tachometer-alt">

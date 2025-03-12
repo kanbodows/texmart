@@ -1,9 +1,5 @@
 @extends("admin.layouts.app")
 
-@section("title")
-        {{ $$module_name_singular->name }} - {{ __($module_action) }} - {{ __($module_title) }}
-@endsection
-
 @section("content")
     <div class="card">
         <div class="card-body">

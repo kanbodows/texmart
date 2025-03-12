@@ -324,21 +324,24 @@ $notifications_latest = optional($notifications)->take(5);
     <div class="container-fluid px-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb my-0 ms-2">
-                @yield("breadcrumbs")
-                @isset($module_name)
-                <x-admin.breadcrumbs>
-                    @if(isset($module_action) && $module_action != 'Index')
-                        <x-admin.breadcrumb-item href="{{ route('admin.'.$module_name.'.index') }}" icon="{{ $module_icon ?? '' }}">
-                            {{ __($module_title) }}
-                        </x-admin.breadcrumb-item>
-                        <x-admin.breadcrumb-item type="active">{{ __($module_action) }}</x-admin.breadcrumb-item>
-                    @else
-                        <x-admin.breadcrumb-item type="active" icon="{{ $module_icon ?? '' }}">
-                            {{ __($module_title) }}
-                        </x-admin.breadcrumb-item>
-                    @endif
-                </x-admin.breadcrumbs>
-                @endisset
+                @hasSection('breadcrumbs')
+                    @yield('breadcrumbs')
+                @else
+                    @isset($module_name)
+                        <x-admin.breadcrumbs>
+                            @if(isset($module_action) && $module_action != 'Index')
+                                <x-admin.breadcrumb-item href="{{ route('admin.'.$module_name.'.index') }}" icon="{{ $module_icon ?? '' }}">
+                                    {{ __($module_title) }}
+                                </x-admin.breadcrumb-item>
+                                <x-admin.breadcrumb-item type="active">{{ __($module_action) }}</x-admin.breadcrumb-item>
+                            @else
+                                <x-admin.breadcrumb-item type="active" icon="{{ $module_icon ?? '' }}">
+                                    {{ __($module_title) }}
+                                </x-admin.breadcrumb-item>
+                            @endif
+                        </x-admin.breadcrumbs>
+                    @endisset
+                @endif
             </ol>
         </nav>
         <div class="d-none d-sm-flex float-end flex-row">

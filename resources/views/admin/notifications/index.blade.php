@@ -1,9 +1,5 @@
 @extends("admin.layouts.app")
 
-@section("title")
-    {{ __($module_action) }} {{ __($module_title) }}
-@endsection
-
 @section("content")
     <div class="card mb-4">
         <div class="card-body">

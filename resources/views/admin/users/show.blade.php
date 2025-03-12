@@ -1,9 +1,5 @@
 @extends("admin.layouts.app")
 
-@section("title")
-    {{ $$module_name_singular->name }} - {{ $$module_name_singular->username }}
-@endsection
-
 @section("content")
     <x-admin.layouts.show :data="$user">
         <x-admin.section-header>

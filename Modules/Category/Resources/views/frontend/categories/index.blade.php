@@ -1,9 +1,5 @@
 @extends("frontend.layouts.app")
 
-@section("title")
-    {{ __($module_title) }}
-@endsection
-
 @section("content")
     <x-frontend.header-block :title="__($module_title)">
         <p class="mb-8 leading-relaxed">The list of {{ __($module_name) }}.</p>
