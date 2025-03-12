@@ -20,7 +20,7 @@
                 <div class="card-header">
                     <h5 class="mb-0">Быстрые действия</h5>
                 </div>
-                <div class="card-body">
+        <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-3">
                             <a href="{{ route('admin.announces.index', ['status' => App\Enums\AnnounceStatus::MODERATION->value]) }}" class="btn btn-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">

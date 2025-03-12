@@ -48,8 +48,8 @@ class ResponsesController extends AdminController
             ->addColumn('announce_title', function ($response) {
                 return $response->announce ? $response->announce->title : 'Удалено';
             })
-            ->addColumn('action', function ($data) {
-                return view('admin.responses.actions', compact('data'));
+            ->editColumn('created_at', function ($data) {
+                return $data->created_at->format('d.m.Y H:i');
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -71,6 +71,7 @@ class ResponsesController extends AdminController
 
         flash('<i class="fas fa-check"></i> Отклик успешно удален')->success()->important();
 
-        return redirect()->back();
+        return response()->json(['success' => true]);
+        // return redirect()->back();
     }
 }

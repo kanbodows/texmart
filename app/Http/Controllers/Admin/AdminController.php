@@ -13,6 +13,8 @@ use App\Models\Payment;
 use App\Enums\AnnounceStatus;
 use App\Enums\UserStatus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 class AdminController extends Controller
 {
@@ -44,6 +46,35 @@ class AdminController extends Controller
     {
         View::share('module_action', 'Список');
         return view('admin.'.$this->module_name.'.index');
+    }
+
+    public function edit($id)
+    {
+        $module_name_singular = Str::singular($this->module_name ?? '');
+        $$module_name_singular = $this->module_model::findOrFail($object->id);
+        View::share('module_action', 'Изменение');
+        return view('admin.'.$this->module_name.'.create_edit', compact("$module_name_singular"));
+    }
+
+    /**
+     * Updates a resource.
+     */
+    public function update(Request $request, $id)
+    {
+        $module_model = $this->module_model;
+        $module_name_singular = Str::singular($this->module_name);
+
+        $module_action = 'Обновить';
+
+        $$module_name_singular = $module_model::findOrFail($id);
+
+        $$module_name_singular->update($request->all());
+
+        flash(Str::singular($this->module_title)."' успешно обновлен")->success()->important();
+
+        logUserAccess($this->module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
+
+        return redirect()->route("admin.{$this->module_name}.show", $$module_name_singular->id);
     }
 
      /**

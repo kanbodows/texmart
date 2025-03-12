@@ -20,6 +20,7 @@ class FeedbacksController extends AdminController
         parent::__construct();
     }
 
+
     public function index_data(Request $request)
     {
         $feedbacks = Feedback::with(['user', 'manufacturer'])->select('feedbacks.*');
@@ -78,6 +79,7 @@ class FeedbacksController extends AdminController
 
         flash('<i class="fas fa-check"></i> Отзыв успешно удален')->success()->important();
 
-        return redirect()->back();
+        return response()->json(['success' => true]);
+        // return redirect()->back();
     }
 }

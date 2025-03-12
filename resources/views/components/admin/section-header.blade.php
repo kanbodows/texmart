@@ -8,6 +8,7 @@
     "module_icon" => "",
     "module_action" => "",
     "filters_block" => "",
+    "add_button" => "",
 ])
 
 <div class="d-flex justify-content-between">
@@ -39,7 +40,7 @@
             @if (Str::endsWith(Route::currentRouteName(), "index"))
                 <x-admin.buttons.return-back />
 
-                @if (auth()->user()->can("add_" . $module_name) && Route::has("admin." . $module_name . ".create"))
+                @if ($add_button && auth()->user()->can("add_" . $module_name) && Route::has("admin." . $module_name . ".create"))
                     <x-admin.buttons.create
                         title="{{ __('Create') }} {{ ucwords(Str::singular($module_name)) }}"
                         small="true"

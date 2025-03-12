@@ -114,15 +114,12 @@ class AnnouncesController extends AdminController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     * @return \Illuminate\View\View
      */
-    public function update(Request $request, Announce $announce)
+    public function update(Request $request, $id)
     {
+        $announce = Announce::findOrFail($id);
         $data = $request->validate([
-            'name' => 'required|string|max:191',
+            'title' => 'required|string|max:191',
             'content' => 'required|string',
             'phone' => 'required|string|max:191',
             'code' => 'string|max:191',
@@ -161,7 +158,7 @@ class AnnouncesController extends AdminController
         }
 
         $announce->update(array_merge(
-            $request->validated(),
+            $data,
             ['images' => $images]
         ));
 

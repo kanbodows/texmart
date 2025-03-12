@@ -21,6 +21,7 @@
                 :module_icon="$module_icon"
                 :module_action="$module_action"
                 :filters_block=1
+                :add_button=0
             />
 
             {{-- Фильтры --}}
@@ -62,7 +63,6 @@
                                     <th>Пользователь</th>
                                     <th>Объявление</th>
                                     <th>Дата</th>
-                                    <th width="15%">Действия</th>
                                 </tr>
                             </thead>
                         </table>
@@ -71,22 +71,13 @@
             </div>
         </div>
     </div>
-
-    @component('admin.components.modal-datatable', [
-        'id' => 'responseDetailsModal',
-        'title' => 'Детали отклика',
-        'columns' => [
-            'key' => 'Параметр',
-            'value' => 'Значение'
-        ]
-    ])
-    @endcomponent
 @endsection
 
 @push('after-styles')
 @endpush
 
 @push('after-scripts')
+    <script src="{{ asset('js/admin/context-menu.js') }}"></script>
     <script>
         $(document).ready(function() {
             // Инициализация Select2
@@ -118,9 +109,12 @@
                     {data: 'id', name: 'id'},
                     {data: 'user_name', name: 'user_name'},
                     {data: 'announce_title', name: 'announce_title'},
-                    {data: 'created_at', name: 'created_at'},
-                    {data: 'action', name: 'action'}
-                ]
+                    {data: 'created_at', name: 'created_at'}
+                ],
+                createdRow: function(row, data) {
+                    // Добавляем data-id для контекстного меню
+                    $(row).attr('data-id', data.id);
+                }
             });
 
             // Инициализация фильтров
@@ -128,6 +122,14 @@
                 select2Selectors: ['.select2-user', '.select2-announce']
             });
             autoSelectUserFromUrl(table);
+
+            initContextMenu(table, {
+                items: {
+                    view: {},
+                    "sep1": "---------",
+                    delete: {},
+                },
+            });
         });
     </script>
 @endpush

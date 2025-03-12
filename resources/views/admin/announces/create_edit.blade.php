@@ -35,12 +35,12 @@
                             {{-- Название --}}
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name" class="form-label">Название <span class="text-danger">*</span></label>
+                                    <label for="title" class="form-label">Название <span class="text-danger">*</span></label>
                                     <input type="text"
-                                           name="name"
-                                           id="name"
-                                           class="form-control @error('name') is-invalid @enderror"
-                                           value="{{ old('name', $announce->name ?? '') }}"
+                                           name="title"
+                                           id="title"
+                                           class="form-control @error('title') is-invalid @enderror"
+                                           value="{{ old('title', $announce->title ?? '') }}"
                                            required>
                                     @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -55,7 +55,7 @@
                                     <select name="category_id"
                                             id="category_id"
                                             class="form-select @error('category_id') is-invalid @enderror"
-                                            required>
+                                            >
                                         <option value="">Выберите категорию</option>
                                         @foreach($categories as $category)
                                             <option value="{{ $category->id }}"

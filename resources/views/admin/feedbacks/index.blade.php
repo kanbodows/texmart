@@ -140,56 +140,13 @@
             });
             autoSelectUserFromUrl(table);
 
-            // Контекстное меню
-            $.contextMenu({
-                selector: '#datatable tbody tr',
-                callback: function (key, options) {
-                    const id = $(this).data('id');
-                    switch(key) {
-                        case "view":
-                            window.location.href = '{{ route("admin.feedbacks.show", "") }}/' + id;
-                            break;
-                        case "delete":
-                            if (confirm('Вы уверены?')) {
-                                $.ajax({
-                                    url: '{{ route("admin.feedbacks.destroy", "") }}/' + id,
-                                    type: 'DELETE',
-                                    data: {
-                                        _token: '{{ csrf_token() }}'
-                                    },
-                                    success: function() {
-                                        table.ajax.reload();
-                                    }
-                                });
-                            }
-                            break;
-                    }
-                },
+            initContextMenu(table, {
                 items: {
-                    "view": {
-                        name: "Просмотр",
-                        icon: "fas fa-eye"
-                    },
+                    view: {},
+                    edit: {},
                     "sep1": "---------",
-                    "delete": {
-                        name: "Удалить",
-                        icon: "fas fa-trash",
-                        className: 'context-menu-item-danger'
-                    }
-                }
-            });
-
-            // Подсветка выбранной строки
-            $('#datatable tbody').on('contextmenu', 'tr', function() {
-                $(this).siblings().removeClass('selected-row');
-                $(this).addClass('selected-row');
-            });
-
-            // Снятие подсветки при клике вне таблицы
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('#datatable').length) {
-                    $('#datatable tbody tr').removeClass('selected-row');
-                }
+                    delete: {},
+                },
             });
         });
     </script>

@@ -22,6 +22,7 @@
                 :module_action="$module_action"
                 :create_route="route('admin.users.create')"
                 :filters_block=1
+                :add_button=1
             />
 
             {{-- Фильтры --}}
