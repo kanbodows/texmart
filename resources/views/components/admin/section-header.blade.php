@@ -9,6 +9,7 @@
     "module_action" => "",
     "filters_block" => "",
     "add_button" => "",
+    "trash_button" => "",
 ])
 
 <div class="d-flex justify-content-between">
@@ -67,12 +68,14 @@
                             <i class="fas fa-cog"></i>
                         </button>
                         <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="{{ route("admin.$module_name.trashed") }}">
-                                    <i class="fas fa-eye-slash"></i>
-                                    Корзина
-                                </a>
-                            </li>
+                            @if ($trash_button)
+                                <li>
+                                    <a class="dropdown-item" href="{{ route("admin.$module_name.trashed") }}">
+                                        <i class="fas fa-eye-slash"></i>
+                                        Корзина
+                                    </a>
+                                </li>
+                            @endif
                         </ul>
                     </div>
                 @endif

@@ -146,6 +146,12 @@ $notifications_latest = optional($notifications)->take(5);
             </a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.messages.index') }}">
+                <i class="nav-icon fa-solid fa-envelope"></i>  &nbsp; Сообщения
+            </a>
+        </li>
+
         <li class="nav-group" aria-expanded="true">
             <a class="nav-link nav-group-toggle" href="#">
                 <i class="nav-icon fa-solid fa-file-lines"></i>

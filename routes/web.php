@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AnnouncesController;
 use App\Http\Controllers\Admin\PaymentsController;
 use App\Http\Controllers\Admin\UsersController;
 use Illuminate\Support\Facades\Broadcast;
+use App\Http\Controllers\Admin\MessagesController;
 
 /*
 *
@@ -205,6 +206,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 
     Route::get("$module_name/trashed", ['as' => "$module_name.trashed", 'uses' => "$controller_name@trashed"]);
     Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
     Route::resource('feedbacks', App\Http\Controllers\Admin\FeedbacksController::class);
+
+    // Messages Routes
+    Route::get('messages/index/data', [MessagesController::class, 'index_data'])->name('messages.index_data');
+    Route::resource('messages', MessagesController::class);
 });
 
 /**
