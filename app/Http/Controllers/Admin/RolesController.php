@@ -13,19 +13,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laracasts\Flash\Flash;
 
-class RolesController extends Controller
+class RolesController extends AdminBaseController
 {
     use Authorizable;
-
-    public $module_title;
-
-    public $module_name;
-
-    public $module_path;
-
-    public $module_icon;
-
-    public $module_model;
 
     public function __construct()
     {
@@ -43,6 +33,7 @@ class RolesController extends Controller
 
         // module model name, path
         $this->module_model = "App\Models\Role";
+        parent::__construct();
     }
 
     /**

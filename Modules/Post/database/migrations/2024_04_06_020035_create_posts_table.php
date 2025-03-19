@@ -40,7 +40,6 @@ return new class extends Migration
             $table->datetime('moderated_at')->nullable();
 
             $table->integer('created_by')->unsigned()->nullable();
-            $table->string('created_by_name')->nullable();
             $table->string('created_by_alias')->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
             $table->integer('deleted_by')->unsigned()->nullable();

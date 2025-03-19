@@ -99,3 +99,34 @@ function initContextMenu(table, options = {}) {
         }
     });
 }
+
+/**
+ * Обновление полей модели через Ajax
+ * @param {string} module - название модуля
+ * @param {number} id - ID записи
+ * @param {object} fields - объект с полями для обновления
+ * @param {object} table - объект DataTable для обновления
+ * @param {string} successMessage - сообщение об успешном обновлении
+ */
+function updateModelFields(module, id, fields, table, successMessage = 'Данные обновлены') {
+    $.ajax({
+        url: `/admin/${module}/${id}/ajax-update`,
+        type: 'PATCH',
+        data: {
+            fields: fields
+        },
+        success: function(response) {
+            if (response.success) {
+                // toastr.success(successMessage);
+                if (table) {
+                    table.ajax.reload();
+                }
+            }
+        },
+        error: function(xhr) {
+            // toastr.error('Ошибка при обновлении данных');
+            alert('Ошибка при обновлении данных');
+            console.error(xhr);
+        }
+    });
+}

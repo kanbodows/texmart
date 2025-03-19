@@ -73,7 +73,7 @@
             {!! field_required("required") !!}
             {{ html()->select('category_id', $field_options, $selected)->placeholder("Выберите опцию")->class("form-select select2-category")->attributes(["required"]) }}
         </div>
-    </div> -->
+    </div>
     <div class="col-12 col-sm-4 mb-3">
         <div class="form-group">
             <?php
@@ -83,7 +83,7 @@
             {!! field_required("required") !!}
             {{ html()->select('type', $select_options)->class("form-select")->attributes(["required"]) }}
         </div>
-    </div>
+    </div>-->
     <div class="col-12 col-sm-4 mb-3">
         <div class="form-group">
             <?php

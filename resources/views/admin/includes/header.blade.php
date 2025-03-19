@@ -330,7 +330,7 @@ $notifications_latest = optional($notifications)->take(5);
                     @isset($module_name)
                         <x-admin.breadcrumbs>
                             @if(isset($module_action) && $module_action != 'Index')
-                                <x-admin.breadcrumb-item href="{{ route('admin.'.$module_name.'.index') }}" icon="{{ $module_icon ?? '' }}">
+                                <x-admin.breadcrumb-item href="{{ route('admin.'.$module_path.'.index') }}" icon="{{ $module_icon ?? '' }}">
                                     {{ __($module_title) }}
                                 </x-admin.breadcrumb-item>
                                 <x-admin.breadcrumb-item type="active">{{ __($module_action) }}</x-admin.breadcrumb-item>

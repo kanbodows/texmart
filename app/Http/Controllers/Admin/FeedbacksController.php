@@ -14,7 +14,7 @@ class FeedbacksController extends AdminController
     {
         $this->module_title = 'Отзывы';
         $this->module_name = 'feedbacks';
-        $this->module_path = 'admin';
+        $this->module_path = 'feedbacks';
         $this->module_icon = 'fa-solid fa-star';
         $this->module_model = "App\Models\Feedback";
         parent::__construct();

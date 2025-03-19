@@ -12,6 +12,10 @@ use App\Http\Controllers\Admin\PaymentsController;
 use App\Http\Controllers\Admin\UsersController;
 use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\Admin\MessagesController;
+use App\Http\Controllers\Admin\CoursesController;
+use App\Http\Controllers\Admin\AdsController;
+use App\Http\Controllers\Admin\CallbacksController;
+use App\Http\Controllers\Admin\PagesController;
 
 /*
 *
@@ -207,9 +211,55 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 
     Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
     Route::resource('feedbacks', App\Http\Controllers\Admin\FeedbacksController::class);
 
+    /*
+     * База знаний
+     */
+    $module_name = 'courses';
+    $controller_name = 'CoursesController';
+    Route::get("$module_name/index_data", ['as' => "$module_name.index_data", 'uses' => "$controller_name@index_data"]);
+    Route::get("$module_name/trashed", ['as' => "$module_name.trashed", 'uses' => "$controller_name@trashed"]);
+    Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
+    Route::resource('courses', App\Http\Controllers\Admin\CoursesController::class);
+    Route::patch("$module_name/{id}/ajax-update", "$controller_name@ajaxUpdate")->name('ajax.update');
+
     // Messages Routes
     Route::get('messages/index/data', [MessagesController::class, 'index_data'])->name('messages.index_data');
     Route::resource('messages', MessagesController::class);
+
+    // Ajax update route
+
+    /*
+     * Рекламные баннеры
+     */
+    $module_name = 'ads';
+    $controller_name = 'AdsController';
+    Route::get("$module_name/index_data", ['as' => "$module_name.index_data", 'uses' => "$controller_name@index_data"]);
+    Route::get("$module_name/trashed", ['as' => "$module_name.trashed", 'uses' => "$controller_name@trashed"]);
+    Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
+    Route::resource('ads', App\Http\Controllers\Admin\AdsController::class);
+    Route::patch("$module_name/{id}/ajax-update", "$controller_name@ajaxUpdate")->name('ajax.update');
+
+    /*
+     * Обратные звонки
+     */
+    $module_name = 'callbacks';
+    $controller_name = 'CallbacksController';
+    Route::get("$module_name/index_data", ['as' => "$module_name.index_data", 'uses' => "$controller_name@index_data"]);
+    Route::get("$module_name/trashed", ['as' => "$module_name.trashed", 'uses' => "$controller_name@trashed"]);
+    Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
+    Route::resource('callbacks', App\Http\Controllers\Admin\CallbacksController::class);
+    Route::patch("$module_name/{id}/ajax-update", "$controller_name@ajaxUpdate")->name('ajax.update');
+
+   /*
+     * Рекламные баннеры
+     */
+    $module_name = 'pages';
+    $controller_name = 'PagesController';
+    Route::get("$module_name/index_data", ['as' => "$module_name.index_data", 'uses' => "$controller_name@index_data"]);
+    Route::get("$module_name/trashed", ['as' => "$module_name.trashed", 'uses' => "$controller_name@trashed"]);
+    Route::patch("$module_name/trashed/{id}", ['as' => "$module_name.restore", 'uses' => "$controller_name@restore"]);
+    Route::resource('pages', App\Http\Controllers\Admin\PagesController::class);
+    Route::patch("$module_name/{id}/ajax-update", "$controller_name@ajaxUpdate")->name('ajax.update');
 });
 
 /**

@@ -8,6 +8,8 @@
                 :module_title="$module_title"
                 :module_icon="$module_icon"
                 :module_action="$module_action"
+                :filters_block=1
+                :add_button=1
             />
 
             <div class="row mt-4">

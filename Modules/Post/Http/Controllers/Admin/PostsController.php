@@ -23,6 +23,7 @@ class PostsController extends AdminBaseController
         $this->module_title = 'Новости';
         $this->module_name = 'posts';
         $this->module_path = 'post::admin';
+        $this->module_path = 'posts';
         $this->module_icon = 'fa-regular fa-file-lines';
         $this->module_model = "Modules\Post\Models\Post";
         parent::__construct();
@@ -48,7 +49,7 @@ class PostsController extends AdminBaseController
             'content' => 'required',
             'image' => 'required|max:191',
             // 'category_id' => 'required|integer',
-            'type' => Rule::enum(PostType::class),
+            // 'type' => Rule::enum(PostType::class),
             'is_featured' => 'required|integer',
             'tags_list' => 'nullable|array',
             'status' => Rule::enum(PostStatus::class),
@@ -61,7 +62,7 @@ class PostsController extends AdminBaseController
         ]);
 
         $data = Arr::except($validated_data, 'tags_list');
-        $data['created_by_name'] = auth()->user()->name;
+        $data['type'] = PostType::NEWS->value;
 
         $$module_name_singular = $this->module_model::create($data);
         $$module_name_singular->tags()->attach($request->input('tags_list'));
@@ -128,7 +129,7 @@ class PostsController extends AdminBaseController
         $module_name = $this->module_name;
         $module_model = $this->module_model;
 
-        $$module_name = $module_model::query();
+        $$module_name = $module_model::query()->where('type', 'news');
 
         return Datatables::of($$module_name)
             ->addColumn('action', function ($data) {

@@ -14,7 +14,7 @@ class ResponsesController extends AdminController
     {
         $this->module_title = 'Отклики';
         $this->module_name = 'responses';
-        $this->module_path = 'admin';
+        $this->module_path = 'responses';
         $this->module_icon = 'fa-solid fa-comments';
         $this->module_model = "App\Models\Response";
         parent::__construct();

@@ -39,9 +39,11 @@ class SellersConfController extends Controller
      */
     public function index()
     {
+        View::share('module_action', 'Настройки производителя');
         return view("admin.sellers_conf");
     }
-/**
+
+    /**
      * Сохранение новой записи
      */
     public function store(Request $request, string $type)

@@ -14,7 +14,7 @@ class PaymentsController extends AdminController
     {
         $this->module_title = 'Платежи';
         $this->module_name = 'payments';
-        $this->module_path = 'admin';
+        $this->module_path = 'payments';
         $this->module_icon = 'fas fa-money-bill';
         $this->module_model = 'App\Models\Payment';
         parent::__construct();

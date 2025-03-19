@@ -15,10 +15,11 @@
     "type": "project",
     "require": {
         "php": "^8.2",
-        "arcanedev/log-viewer": "^11.0",
+        "arcanedev/log-viewer": "^11.0.1",
         "intervention/image-laravel": "^1.2",
         "laracasts/flash": "^3.2",
         "laravel/framework": "^11.0",
+        "laravel/pulse": "^1.4",
         "laravel/socialite": "^5.12",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
@@ -39,9 +40,10 @@
         "laravel/breeze": "^2.0",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
+        "laravel/telescope": "^5.5",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
-        "phpunit/phpunit": "^10.5",
+        "phpunit/phpunit": "^11.0",
         "spatie/laravel-ignition": "^2.4"
     },
     "autoload": {

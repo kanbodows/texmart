@@ -33,7 +33,7 @@ class UsersController extends AdminController
     {
         $this->module_title = 'Пользователи';
         $this->module_name = 'users';
-        $this->module_path = 'admin';
+        $this->module_path = 'users';
         $this->module_icon = 'fa-solid fa-user-group';
         $this->module_model = "App\Models\User";
         parent::__construct();
@@ -218,17 +218,16 @@ class UsersController extends AdminController
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
         abort_if(Gate::denies('user_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $user = User::findOrFail($id);
         $user->delete();
 
-        return back();
+        // return back();
+        return response()->json(['success' => true]);
     }
 
     /**

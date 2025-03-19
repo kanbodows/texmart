@@ -24,7 +24,7 @@
                 <div class="col">
                     {{ html()->form("POST", route("admin.$module_name.store"))->acceptsFiles()->open() }}
 
-                    @include("$module_path.$module_name.form")
+                    @include("$module_name_singular::admin.$module_name.form")
 
                     <div class="row">
                         <div class="col-6">

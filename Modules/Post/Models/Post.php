@@ -22,6 +22,16 @@ class Post extends BaseModel
 
     protected $table = 'posts';
 
+    protected $fillable = [
+        'title',
+        'content',
+        'type',
+        'status',
+        'order',
+        'video',
+        // ... другие поля ...
+    ];
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -81,5 +91,15 @@ class Post extends BaseModel
     protected static function newFactory()
     {
         return \Modules\Post\database\factories\PostFactory::new();
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\Models\User', 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo('App\Models\User', 'updated_by');
     }
 }

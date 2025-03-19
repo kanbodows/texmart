@@ -28,7 +28,7 @@ class AnnouncesController extends AdminController
     {
         $this->module_title = 'Объявления';
         $this->module_name = 'announces';
-        $this->module_path = 'admin';
+        $this->module_path = 'announces';
         $this->module_model = 'App\Models\Announce';
         $this->module_icon = 'fas fa-bullhorn';
         parent::__construct();

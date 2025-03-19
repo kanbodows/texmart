@@ -45,7 +45,18 @@ class AdminController extends Controller
     public function index()
     {
         View::share('module_action', 'Список');
-        return view('admin.'.$this->module_name.'.index');
+        return view('admin.'.$this->module_path.'.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function create()
+    {
+		View::share('module_action', 'Создать');
+        return view('admin.'.$this->module_path.'.create_edit');
     }
 
     public function edit($id)
@@ -53,7 +64,7 @@ class AdminController extends Controller
         $module_name_singular = Str::singular($this->module_name ?? '');
         $$module_name_singular = $this->module_model::findOrFail($id);
         View::share('module_action', 'Изменение');
-        return view('admin.'.$this->module_name.'.create_edit', compact("$module_name_singular"));
+        return view('admin.'.$this->module_path.'.create_edit', compact("$module_name_singular"));
     }
 
     /**
@@ -302,7 +313,7 @@ class AdminController extends Controller
 
         logUserAccess($module_title.' '.$module_action.' | Id: '.$$module_name_singular->id);
 
-        return redirect("admin/{$module_name}");
+        return redirect("admin/{$module_path}");
     }
 
     private function getUserRegistrationsChart()
@@ -397,5 +408,45 @@ class AdminController extends Controller
                 return "hsl({$i}0, 70%, 50%)";
             })->toArray()
         ];
+    }
+
+    /**
+     * Update model fields via Ajax
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ajaxUpdate(Request $request, $id)
+    {
+        $data = $request->all();
+        $model = app($this->module_model);
+        $item = $model::findOrFail($id);
+
+        // Проверяем, есть ли поле updated_by в модели
+        if (in_array('updated_by', $item->getFillable())) {
+            $data['updated_by'] = auth()->id();
+        }
+
+        $item->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Запись успешно обновлена'
+        ]);
+    }
+
+     /**
+     * Удаляет отклик
+     */
+    public function destroy($id)
+    {
+        $response = $this->module_model::findOrFail($id);
+        $response->delete();
+
+        flash('<i class="fas fa-check"></i> Запись успешно удалена')->success()->important();
+
+        return response()->json(['success' => true]);
+        // return redirect()->back();
     }
 }

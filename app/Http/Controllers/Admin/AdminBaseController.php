@@ -21,13 +21,14 @@ class AdminBaseController extends AdminController
      */
     public function index()
     {
+        $module_name_singular = Str::singular($this->module_name);
         $module_model = $this->module_model;
         ${$this->module_name} = $module_model::paginate(15);
 
         $module_action = 'Список';
         // logUserAccess($this->module_title.' '.$module_action);
 
-        return view("{$this->module_path}.{$this->module_name}.index",
+        return view("{$module_name_singular}::admin.{$this->module_name}.index",
             compact( "{$this->module_name}", 'module_action')
         );
     }
@@ -71,10 +72,12 @@ class AdminBaseController extends AdminController
     public function create()
     {
         $module_action = 'Создать';
+        $module_name_singular = Str::singular($this->module_name);
         // logUserAccess($module_title.' '.$module_action);
 
+        view()->share('module_name_singular', $module_name_singular);
         return view(
-            "{$this->module_path}.{$this->module_name}.create_edit",
+            "{$module_name_singular}::admin.{$this->module_name}.create_edit",
             compact('module_action')
         );
     }
@@ -201,8 +204,6 @@ class AdminBaseController extends AdminController
     {
         $module_title = $this->module_title;
         $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
 
@@ -260,8 +261,6 @@ class AdminBaseController extends AdminController
     {
         $module_title = $this->module_title;
         $module_name = $this->module_name;
-        $module_path = $this->module_path;
-        $module_icon = $this->module_icon;
         $module_model = $this->module_model;
         $module_name_singular = Str::singular($module_name);
 

@@ -4,9 +4,11 @@ namespace Modules\Post\Enums;
 
 enum PostType: string
 {
-    case Article = 'Article';
-    case News = 'News';
-    case Feature = 'Feature';
+    case ARTICLE = 'article';
+    case NEWS = 'news';
+    case STATIC_PAGE = 'static_page';
+    case COURSES = 'courses';
+    case ADS = 'ads';
 
     public static function getAllValues(): array
     {
